@@ -113,6 +113,32 @@ def check_data_complexity(
             raise InputError(f"{context} contains an unsupported value")
 
 
+def _check_json_nesting(text: str, context: str, max_depth: int) -> None:
+    """Reject excessive container nesting before the JSON decoder allocates it."""
+
+    depth = 0
+    in_string = False
+    escaped = False
+    for character in text:
+        if in_string:
+            if escaped:
+                escaped = False
+            elif character == "\\":
+                escaped = True
+            elif character == '"':
+                in_string = False
+            continue
+        if character == '"':
+            in_string = True
+        elif character in "[{":
+            depth += 1
+            # Decoded-tree depth starts at zero, so the root container is one opener.
+            if depth > max_depth + 1:
+                raise InputError(f"{context} exceeds JSON complexity limits")
+        elif character in "]}":
+            depth -= 1
+
+
 def load_json_text(
     text: str,
     *,
@@ -128,6 +154,7 @@ def load_json_text(
     try:
         if len(text.encode("utf-8")) > max_bytes:
             raise InputError(f"{context} exceeds {max_bytes} byte input limit")
+        _check_json_nesting(text, context, max_depth)
         value = json.loads(
             text,
             object_pairs_hook=_pairs(context),

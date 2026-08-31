@@ -355,8 +355,19 @@ def test_load_bundle_rejects_truncation_oversize_and_node_exhaustion(tmp_path: P
         '{"schema_version":1,"run":' + "[" * 50_000 + "0" + "]" * 50_000 + ',"points":[]}',
         encoding="utf-8",
     )
-    with pytest.raises(InputError, match="invalid JSON"):
+    with pytest.raises(InputError, match="complexity limits"):
         load_bundle(deeply_nested)
+
+
+def test_json_depth_precheck_ignores_brackets_and_escaped_quotes_in_strings(
+    tmp_path: Path,
+) -> None:
+    data = bundle_dict()
+    data["run"] = {"description": '[{\\"nested-looking\\": true}]' * 100}
+    path = tmp_path / "quoted-structure.json"
+    path.write_text(json.dumps(data), encoding="utf-8")
+
+    assert load_bundle(path).run == data["run"]
 
 
 def test_rejects_casefold_collisions_and_unsafe_sample_or_metric() -> None:

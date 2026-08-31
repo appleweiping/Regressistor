@@ -1,15 +1,17 @@
 from __future__ import annotations
 
 import copy
+from pathlib import Path
 
 import pytest
 
 from regressistor.bundle import parse_bundle
 from regressistor.errors import InputError
-from regressistor.gate import compare
+from regressistor.gate import MAX_DECISIONS, compare
 from regressistor.matching import index_bundle, project_case, sorted_cases
 from regressistor.model import Status
 from regressistor.policy import parse_policy
+from regressistor.report import load_report
 from tests.helpers import bundle_dict
 
 
@@ -55,16 +57,16 @@ def run_compare(
     )
     return compare(
         parsed_policy,
-        parse_bundle(bundle_dict(baseline_value), source_hash="base"),
-        parse_bundle(bundle_dict(candidate_value), source_hash="candidate"),
+        parse_bundle(bundle_dict(baseline_value), source_hash="a" * 64),
+        parse_bundle(bundle_dict(candidate_value), source_hash="b" * 64),
     )
 
 
 def test_passing_comparison_has_provenance_and_values() -> None:
     report = run_compare(65.0, 64.5)
     assert report.passed
-    assert report.baseline_sha256 == "base"
-    assert report.candidate_sha256 == "candidate"
+    assert report.baseline_sha256 == "a" * 64
+    assert report.candidate_sha256 == "b" * 64
     decision = report.decisions[0]
     assert decision.status is Status.PASS
     assert decision.contract_margin == pytest.approx(4.5)
@@ -177,6 +179,33 @@ def test_warning_failure_is_non_blocking() -> None:
     assert report.passed
     assert report.decisions[0].status is Status.SPEC_FAIL
     assert not report.decisions[0].blocking
+
+
+def test_comparison_decision_expansion_is_bounded(tmp_path: Path) -> None:
+    bundle_data = bundle_dict()
+    template = bundle_data["points"][0]
+    bundle_data["points"] = []
+    for index in range(101):
+        point = copy.deepcopy(template)
+        point["case"]["vdd"] = index
+        bundle_data["points"].append(point)
+    bundle = parse_bundle(bundle_data)
+
+    raw_policy = policy_data(contract={"kind": "min", "limit": 0.0})
+    metric = raw_policy["metrics"][0]
+    raw_policy["metrics"] = [dict(metric, name=f"metric-{index}") for index in range(100)]
+    policy = parse_policy(raw_policy)
+
+    exact_data = copy.deepcopy(bundle_data)
+    exact_data["points"].pop()
+    exact = parse_bundle(exact_data)
+    exact_report = compare(policy, exact, exact)
+    assert len(exact_report.decisions) == MAX_DECISIONS
+    report_path = exact_report.write_json(tmp_path / "max-decisions.json")
+    assert len(load_report(report_path).decisions) == MAX_DECISIONS
+
+    with pytest.raises(InputError, match="expands to 10100 decisions"):
+        compare(policy, bundle, bundle)
 
 
 def test_candidate_case_and_metric_missing() -> None:

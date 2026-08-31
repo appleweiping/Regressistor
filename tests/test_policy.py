@@ -33,14 +33,19 @@ def valid_policy() -> dict[str, object]:
 
 
 def test_parses_complete_policy() -> None:
-    policy = parse_policy(valid_policy(), source_hash="abc")
+    policy = parse_policy(valid_policy(), source_hash="a" * 64)
     assert policy.case_keys == ("process", "vdd")
-    assert policy.source_hash == "abc"
+    assert policy.source_hash == "a" * 64
     metric = policy.metrics[0]
     assert metric.reducer is Reducer.MIN
     assert metric.severity is Severity.WARNING
     assert metric.contract and metric.contract.kind is ContractKind.MIN
     assert metric.regression and metric.regression.direction is Direction.HIGHER
+
+
+def test_policy_source_digest_is_strict() -> None:
+    with pytest.raises(InputError, match="source_hash"):
+        parse_policy(valid_policy(), source_hash="not-a-digest")
 
 
 def test_load_policy_reads_toml_and_hashes_source(tmp_path: Path) -> None:
@@ -172,3 +177,46 @@ def test_rejects_invalid_toml_and_missing_file(tmp_path: Path) -> None:
     broken.write_text("this = [", encoding="utf-8")
     with pytest.raises(InputError, match="invalid TOML"):
         load_policy(broken)
+
+
+def test_policy_rejects_oversized_and_deep_documents(tmp_path: Path) -> None:
+    oversized = tmp_path / "oversized.toml"
+    oversized.write_bytes(b" " * 1_048_577)
+    with pytest.raises(InputError, match="byte input limit"):
+        load_policy(oversized)
+
+    data = valid_policy()
+    nested: object = "leaf"
+    for _ in range(70):
+        nested = [nested]
+    data["unknown"] = nested
+    with pytest.raises(InputError, match="complexity limits"):
+        parse_policy(data)
+
+
+def test_policy_rejects_parser_recursion_and_non_string_keys(tmp_path: Path) -> None:
+    deeply_nested = tmp_path / "parser-recursion.toml"
+    deeply_nested.write_text("value = " + "[" * 2_000 + "0" + "]" * 2_000, encoding="utf-8")
+    with pytest.raises(InputError, match="invalid TOML"):
+        load_policy(deeply_nested)
+
+    data = valid_policy()
+    data[1] = "not-toml"  # type: ignore[index]
+    with pytest.raises(InputError, match="keys must be strings"):
+        parse_policy(data)
+
+
+@pytest.mark.parametrize("field", ["case_key", "metric"])
+def test_policy_rejects_control_characters_and_casefold_collisions(field: str) -> None:
+    data = valid_policy()
+    if field == "case_key":
+        data["case_keys"] = ["VDD", "vdd"]
+    else:
+        data["metrics"].append(dict(data["metrics"][0], name="GAIN"))  # type: ignore[union-attr,index]
+    with pytest.raises(InputError, match="duplicate"):
+        parse_policy(data)
+
+    data = valid_policy()
+    data["metrics"][0]["name"] = "\x1b[31mGAIN"  # type: ignore[index]
+    with pytest.raises(InputError, match="portable"):
+        parse_policy(data)

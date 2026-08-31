@@ -1,0 +1,98 @@
+{
+  "schema_version": 2,
+  "benchmark": "simcairn-rc-pvt-gate",
+  "license": "MIT",
+  "contract": "regressistor.measurement-bundle/2",
+  "runtime": {
+    "distribution_version": "0.2.0",
+    "package_tree_sha256": "9ba11543644a4cb14643dd34ddff20d564c494bb454495892a4f2e0d884641c3",
+    "harness_sha256": "d6532bdcbef7260b094ba1c58ed180c250b98769642901940b737e5475294c3d"
+  },
+  "schema": {
+    "path": "docs/schemas/measurement-bundle-2.schema.json",
+    "draft": "2020-12",
+    "sha256": "0db1d40f8409e16fed867903494b5de23a3df2f3384dba4276584e76e718e87f"
+  },
+  "compatibility_schema": {
+    "path": "docs/schemas/measurement-bundle-1.schema.json",
+    "draft": "2020-12",
+    "sha256": "1381d31f843a029c94ca5e45e81275b6fbb60811165b232333dc7f77880e409e"
+  },
+  "sources": [
+    {
+      "path": "fixtures/simcairn-offline-golden.json",
+      "kind": "project-generated-analytic-mock",
+      "sha256": "b84f7ffc73a2369a117a85e5abb106eb89142863b34a7100421f168bc028691b",
+      "provenance": {
+        "simulator": "project-analytic-mock",
+        "aggregate_activity_id": "79af4aa63754fa2b7548c9a3b9e9c66ef9d5e8e47dd3afacf9016eafa38c1072"
+      }
+    },
+    {
+      "path": "fixtures/simcairn-ngspice-42.json",
+      "kind": "real-ngspice-42-run",
+      "sha256": "bc76aa803969dac1980f646cc84d6dc10debde246b0d5f65954413f6fef8b4b0",
+      "provenance": {
+        "simulator": "ngspice-42",
+        "aggregate_activity_id": "3c1ab81f3d1ec3e7673b526a44f49849a67993140de48feccfc56106f1fa0830",
+        "evidence_manifest_path": "evidence/simcairn-rc-manifest.json",
+        "evidence_manifest_sha256": "c3ceea675baf526c86249e3a6f31ecf0c1a095255e3f8b9794339bd1fc55e746"
+      }
+    },
+    {
+      "path": "fixtures/simcairn-sky130-ngspice42.json",
+      "kind": "real-ngspice-42-ciel-sky130a-measurement-run",
+      "sha256": "155b2d1d2e3eed4196b170a06d5bbaff7edd9fd011b0af060139db695e26e5dc",
+      "provenance": {
+        "pdk_distribution": "Ciel SKY130A",
+        "pdk_revision": "1689ac3f2dc763876eaf967227c7dfe831b031ae",
+        "simulator": "ngspice-42",
+        "aggregate_activity_id": "12fd500280c8efe2e52959353ce7d5e8e77d4fe78e2569d0135281becd18b5f3",
+        "evidence_manifest_path": "evidence/simcairn-sky130-manifest.json",
+        "evidence_manifest_sha256": "e2e8067b682603a2d61be827e85639e71200823d1e2718ddef8e14d4314983e8",
+        "models_vendored": false
+      }
+    },
+    {
+      "path": "fixtures/simcairn-gf180-ngspice42.json",
+      "kind": "real-ngspice-42-ciel-gf180mcu-measurement-run",
+      "sha256": "f4e4b661eb1a141d17d66e785b55d93a0110524d1d3173f390e71408d7866fbc",
+      "provenance": {
+        "pdk_distribution": "Ciel GF180MCU",
+        "pdk_revision": "1689ac3f2dc763876eaf967227c7dfe831b031ae",
+        "simulator": "ngspice-42",
+        "aggregate_activity_id": "7a45b6055af057e35acab4f10b9a56ba3e469dc0af48e65865155abc432de6f6",
+        "evidence_manifest_path": "evidence/simcairn-gf180-manifest.json",
+        "evidence_manifest_sha256": "f2c73950187476a2013f5ee9c1faf3c6433862ece7e63b284263c91bf306670d",
+        "models_vendored": false
+      }
+    }
+  ],
+  "commands": [
+    "regressistor validate --policy benchmarks/rc-pvt-policy.toml --bundle benchmarks/fixtures/simcairn-ngspice-42.json",
+    "regressistor check --policy benchmarks/rc-pvt-policy.toml --baseline benchmarks/fixtures/simcairn-ngspice-42.json --candidate benchmarks/fixtures/simcairn-ngspice-42.json --out benchmark-report",
+    "regressistor validate --policy benchmarks/sky130-policy.toml --bundle benchmarks/fixtures/simcairn-sky130-ngspice42.json",
+    "regressistor check --policy benchmarks/sky130-policy.toml --baseline benchmarks/fixtures/simcairn-sky130-ngspice42.json --candidate benchmarks/fixtures/simcairn-sky130-ngspice42.json --out sky130-reference-report",
+    "regressistor validate --policy benchmarks/gf180-policy.toml --bundle benchmarks/fixtures/simcairn-gf180-ngspice42.json",
+    "regressistor check --policy benchmarks/gf180-policy.toml --baseline benchmarks/fixtures/simcairn-gf180-ngspice42.json --candidate benchmarks/fixtures/simcairn-gf180-ngspice42.json --out gf180-reference-report",
+    "python benchmarks/benchmark.py --points 10,100,1000 --repetitions 5"
+  ],
+  "expected": {
+    "fixture_points": 32,
+    "decision": "pass",
+    "scaling_decisions_equal_requested_points": true,
+    "scaling_workload_sha256": "6e049b433fe7b30d83dd11c48f8b63135d4f17d7c10aaaf66432f4100d65346f",
+    "sky130": {
+      "points": 27,
+      "case_keys": ["CORNER", "VDD", "TEMP_C"],
+      "metrics_per_point": 5,
+      "self_comparison": "pass-format-and-identity-only"
+    },
+    "gf180": {
+      "points": 27,
+      "case_keys": ["CORNER", "VDD", "TEMP_C"],
+      "metrics_per_point": 5,
+      "self_comparison": "pass-format-and-identity-only"
+    }
+  }
+}

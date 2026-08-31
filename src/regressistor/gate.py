@@ -24,7 +24,7 @@ from regressistor.model import (
     case_identity,
 )
 from regressistor.reducers import reduce_values
-from regressistor.report import Report
+from regressistor.report import MAX_DECISIONS, Report
 from regressistor.units import convert
 
 
@@ -171,6 +171,11 @@ def compare(policy: Policy, baseline: Bundle, candidate: Bundle) -> Report:
     baseline_index = index_bundle(baseline, policy)
     candidate_index = index_bundle(candidate, policy)
     identities = set(baseline_index) | set(candidate_index)
+    expanded_decisions = len(identities) * len(policy.metrics)
+    if expanded_decisions > MAX_DECISIONS:
+        raise InputError(
+            f"comparison expands to {expanded_decisions} decisions; limit is {MAX_DECISIONS}"
+        )
     cases_by_identity = {
         identity: (candidate_index.get(identity) or baseline_index[identity])[0]
         for identity in identities

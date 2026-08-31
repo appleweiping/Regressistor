@@ -29,6 +29,17 @@ python -m pip install -e ".[dev]"
 
 The runtime has no third-party dependencies.
 
+## SimCairn interoperability benchmark
+
+Regressistor directly validates SimCairn's producer-bound
+`regressistor.measurement-bundle/2` aggregate artifact while retaining the
+generic version-1 bundle API for compatibility; no runtime dependency between
+the projects is required. The 32-point RC PVT reference, policy,
+offline analytic fixture, real ngspice-42 fixture, and pinned SKY130A and GF180MCU
+27-point PVT fixtures, commands, and hashes are in
+[`benchmarks`](benchmarks). See [`docs/validation.md`](docs/validation.md) for
+the evidence boundary.
+
 ## Run the example
 
 ```bash
@@ -126,6 +137,11 @@ Bundles are strict JSON:
 Values must be finite. Supported scalar units include dimensionless values,
 percent, V, A, s, Hz, F, H, W, Ohm, degrees, radians, dB, SI prefixes, and one
 level of multiplication or division such as `V/us` and `A/V`.
+
+Version 2 is reserved for SimCairn evidence and additionally requires the exact
+producer version, package-source-tree digest, validation implementation digest,
+adapter digest, and aggregate activity ID. A version-1 document cannot acquire
+that trust level by changing its version or contract label.
 
 ## Baseline workflow
 

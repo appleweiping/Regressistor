@@ -16,6 +16,11 @@ def _display(value: float | None) -> str:
     return "—" if value is None else f"{value:.12g}"
 
 
+def _safe_display_text(value: str) -> str:
+    """Replace control characters before terminal, Markdown, or XML rendering."""
+    return "".join(character if character.isprintable() else " " for character in value)
+
+
 def console_summary(report: Report) -> str:
     outcome = "PASS" if report.passed else "FAIL"
     counts = ", ".join(f"{name}={count}" for name, count in report.counts.items() if count)
@@ -24,19 +29,25 @@ def console_summary(report: Report) -> str:
 
 def decision_text(decision: Decision) -> str:
     lines = [
-        f"metric: {decision.metric}",
-        f"case: {case_label(decision.case)}",
+        f"metric: {_safe_display_text(decision.metric)}",
+        f"case: {_safe_display_text(case_label(decision.case))}",
         f"status: {decision.status.value}",
         f"severity: {decision.severity.value}",
         f"blocking: {str(decision.blocking).lower()}",
-        f"baseline: {_display(decision.baseline)} {decision.unit}",
-        f"candidate: {_display(decision.candidate)} {decision.unit}",
+        f"baseline: {_display(decision.baseline)} {_safe_display_text(decision.unit)}",
+        f"candidate: {_display(decision.candidate)} {_safe_display_text(decision.unit)}",
     ]
     if decision.contract_margin is not None:
-        lines.append(f"contract margin: {_display(decision.contract_margin)} {decision.unit}")
+        lines.append(
+            f"contract margin: {_display(decision.contract_margin)} "
+            f"{_safe_display_text(decision.unit)}"
+        )
     if decision.regression_margin is not None:
-        lines.append(f"regression margin: {_display(decision.regression_margin)} {decision.unit}")
-    lines.append(f"reason: {decision.message}")
+        lines.append(
+            f"regression margin: {_display(decision.regression_margin)} "
+            f"{_safe_display_text(decision.unit)}"
+        )
+    lines.append(f"reason: {_safe_display_text(decision.message)}")
     return "\n".join(lines)
 
 
@@ -49,8 +60,8 @@ def markdown(report: Report) -> str:
         "|---|---|---:|---:|---:|---:|---:|",
     ]
     for decision in report.decisions:
-        metric = _markdown_cell(decision.metric)
-        case = _markdown_cell(case_label(decision.case))
+        metric = _markdown_cell(_safe_display_text(decision.metric))
+        case = _markdown_cell(_safe_display_text(case_label(decision.case)))
         status = decision.status.value.upper()
         lines.append(
             f"| {metric} | {case} | {status} | {_display(decision.baseline)} | "
@@ -61,9 +72,9 @@ def markdown(report: Report) -> str:
     for decision in report.decisions:
         if decision.status is not Status.PASS:
             lines.append(
-                f"- **{_markdown_cell(decision.metric)}** at "
-                f"{_markdown_cell(case_label(decision.case))}: "
-                f"{_markdown_cell(decision.message)}"
+                f"- **{_markdown_cell(_safe_display_text(decision.metric))}** at "
+                f"{_markdown_cell(_safe_display_text(case_label(decision.case)))}: "
+                f"{_markdown_cell(_safe_display_text(decision.message))}"
             )
     if all(decision.status is Status.PASS for decision in report.decisions):
         lines.append("- No failures or warnings.")
@@ -92,13 +103,19 @@ def junit_xml(report: Report) -> str:
         test = ET.SubElement(
             suite,
             "testcase",
-            {"classname": f"regressistor.{decision.metric}", "name": case},
+            {
+                "classname": f"regressistor.{_safe_display_text(decision.metric)}",
+                "name": _safe_display_text(case),
+            },
         )
         if decision.blocking:
             failure = ET.SubElement(
                 test,
                 "failure",
-                {"type": decision.status.value, "message": decision.message},
+                {
+                    "type": decision.status.value,
+                    "message": _safe_display_text(decision.message),
+                },
             )
             failure.text = decision_text(decision)
         elif decision.status is not Status.PASS:

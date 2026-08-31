@@ -1,9 +1,12 @@
 include CHANGELOG.md
+include CITATION.cff
 include CODE_OF_CONDUCT.md
 include CONTRIBUTING.md
 include LICENSE
 include README.md
 include SECURITY.md
 recursive-include docs *.md *.svg
+recursive-include docs/schemas *.json
 recursive-include examples *.json *.md *.toml
+recursive-include benchmarks *.json *.md *.py *.toml
 recursive-include tests *.py

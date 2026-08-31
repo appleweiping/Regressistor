@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://appleweiping.github.io/Regressistor/schemas/measurement-bundle-2.schema.json",
+  "title": "Producer-bound SimCairn measurement bundle v2",
+  "type": "object",
+  "required": ["schema_version", "run", "points"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"const": 2},
+    "run": {
+      "type": "object",
+      "required": ["producer", "producer_identity", "contract", "aggregate_activity_id"],
+      "additionalProperties": false,
+      "properties": {
+        "producer": {"const": "SimCairn"},
+        "producer_identity": {"$ref": "#/$defs/producerIdentity"},
+        "contract": {"const": "regressistor.measurement-bundle/2"},
+        "aggregate_activity_id": {"$ref": "#/$defs/digest"},
+        "frozen_from_sha256": {"$ref": "#/$defs/digest"}
+      }
+    },
+    "points": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/point"}
+    }
+  },
+  "$defs": {
+    "digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "producerIdentity": {
+      "type": "object",
+      "required": [
+        "distribution",
+        "version",
+        "package_tree_algorithm",
+        "package_tree_sha256",
+        "validation_implementation_sha256",
+        "adapter_implementation_sha256"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "distribution": {"const": "simcairn"},
+        "version": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+!-]{0,127}$"
+        },
+        "package_tree_algorithm": {"const": "simcairn-python-source-tree/1"},
+        "package_tree_sha256": {"$ref": "#/$defs/digest"},
+        "validation_implementation_sha256": {"$ref": "#/$defs/digest"},
+        "adapter_implementation_sha256": {"$ref": "#/$defs/digest"}
+      }
+    },
+    "portableName": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$"
+    },
+    "scalar": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$"
+        },
+        {"type": ["integer", "number", "boolean"]}
+      ]
+    },
+    "measurement": {
+      "type": "object",
+      "required": ["value", "unit"],
+      "additionalProperties": false,
+      "properties": {
+        "value": {"type": "number"},
+        "unit": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$"
+        }
+      }
+    },
+    "point": {
+      "type": "object",
+      "required": ["case", "sample", "metrics"],
+      "additionalProperties": false,
+      "properties": {
+        "case": {
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": {"$ref": "#/$defs/portableName"},
+          "additionalProperties": {"$ref": "#/$defs/scalar"}
+        },
+        "sample": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256,
+              "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f]+$"
+            },
+            {"type": "integer"}
+          ]
+        },
+        "metrics": {
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": {"$ref": "#/$defs/portableName"},
+          "additionalProperties": {"$ref": "#/$defs/measurement"}
+        }
+      }
+    }
+  }
+}

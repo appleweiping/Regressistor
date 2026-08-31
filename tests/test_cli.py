@@ -1,12 +1,17 @@
 from __future__ import annotations
 
 import json
+import os
+import subprocess
+import sys
 from pathlib import Path
 
 import pytest
 
 from regressistor.cli import build_parser, main
+from regressistor.report import report_from_dict
 from tests.helpers import write_inputs
+from tests.test_gate import run_compare
 
 
 def test_parser_exposes_all_commands() -> None:
@@ -152,7 +157,10 @@ def test_explain_filters_metric_and_case(
     assert "status: spec_fail" in capsys.readouterr().out
 
 
-@pytest.mark.parametrize("case_filter", ["bad", "vdd=[]", "vdd=null"])
+@pytest.mark.parametrize(
+    "case_filter",
+    ["bad", "vdd=[]", "vdd=null", "vdd=NaN", "vdd=Infinity", "vdd=1e999"],
+)
 def test_explain_rejects_bad_case_filters(
     tmp_path: Path, capsys: pytest.CaptureFixture[str], case_filter: str
 ) -> None:
@@ -201,6 +209,69 @@ def test_explain_reports_no_match(tmp_path: Path, capsys: pytest.CaptureFixture[
     assert "no report decision" in capsys.readouterr().err
 
 
+def test_explain_rejects_duplicate_case_filters(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    policy, baseline, candidate = write_inputs(tmp_path)
+    out = tmp_path / "artifacts"
+    assert (
+        main(
+            [
+                "check",
+                "--policy",
+                str(policy),
+                "--baseline",
+                str(baseline),
+                "--candidate",
+                str(candidate),
+                "--out",
+                str(out),
+            ]
+        )
+        == 0
+    )
+    capsys.readouterr()
+    assert (
+        main(
+            [
+                "explain",
+                "--report",
+                str(out / "report.json"),
+                "--case",
+                "vdd=1.0",
+                "--case",
+                "VDD=1.0",
+            ]
+        )
+        == 2
+    )
+    assert "duplicate" in capsys.readouterr().err
+
+
+def test_explain_is_safe_under_ascii_stdout(tmp_path: Path) -> None:
+    data = run_compare(65.0, 65.0).to_dict()
+    data["results"][0]["case"]["process"] = "😀"
+    report_path = report_from_dict(data).write_json(tmp_path / "unicode-report.json")
+    completed = subprocess.run(  # nosec B603
+        [
+            sys.executable,
+            "-m",
+            "regressistor",
+            "explain",
+            "--report",
+            str(report_path),
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+        encoding="ascii",
+        env={**os.environ, "PYTHONIOENCODING": "ascii"},
+    )
+    assert completed.returncode == 0
+    assert "Traceback" not in completed.stderr
+    assert "\\U0001f600" in completed.stdout
+
+
 def test_cli_invalid_input_and_output_error(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
@@ -226,3 +297,14 @@ def test_cli_invalid_input_and_output_error(
     )
     assert result == 3
     assert "output error" in capsys.readouterr().err
+
+
+def test_cli_contains_toml_parser_recursion(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    policy = tmp_path / "deep-policy.toml"
+    policy.write_text("value = " + "[" * 2_000 + "0" + "]" * 2_000, encoding="utf-8")
+    assert main(["validate", "--policy", str(policy)]) == 2
+    captured = capsys.readouterr()
+    assert "input error" in captured.err
+    assert "Traceback" not in captured.err

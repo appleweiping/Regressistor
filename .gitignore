@@ -9,6 +9,7 @@ __pycache__/
 build/
 dist/
 artifacts/
+.benchmark-*/
 .env
 .env.*
 !.env.example

@@ -1,0 +1,33 @@
+schema_version = 1
+case_keys = ["PROCESS_SCALE", "VDD", "TEMP_C", "R", "C"]
+numeric_epsilon = 1e-12
+
+[missing]
+baseline_case = "error"
+candidate_case = "error"
+baseline_metric = "error"
+candidate_metric = "error"
+
+[[metrics]]
+name = "cutoff_hz"
+unit = "Hz"
+reduce = "mean"
+severity = "error"
+contract = { kind = "range", lower = 10000.0, upper = 1000000.0 }
+regression = { direction = "higher", relative_budget = 0.02, relative_floor = 1.0 }
+
+[[metrics]]
+name = "resistance_ohm"
+unit = "ohm"
+reduce = "mean"
+severity = "error"
+contract = { kind = "range", lower = 100.0, upper = 10000.0 }
+regression = { direction = "target", target = 1000.0, relative_budget = 0.02, relative_floor = 1.0 }
+
+[[metrics]]
+name = "capacitance_f"
+unit = "F"
+reduce = "mean"
+severity = "error"
+contract = { kind = "range", lower = 1e-12, upper = 1e-6 }
+regression = { direction = "target", target = 1e-9, relative_budget = 0.02, relative_floor = 1e-15 }

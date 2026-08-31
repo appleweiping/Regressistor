@@ -9,6 +9,7 @@ from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
 
+from regressistor._strict_data import check_data_complexity, read_document
 from regressistor.errors import InputError
 from regressistor.model import (
     Contract,
@@ -24,6 +25,8 @@ from regressistor.model import (
 )
 from regressistor.units import validate_unit
 
+_HEX_DIGEST = frozenset("0123456789abcdef")
+
 
 def _mapping(value: Any, context: str) -> Mapping[str, Any]:
     if not isinstance(value, Mapping):
@@ -38,9 +41,15 @@ def _reject_unknown(table: Mapping[str, Any], allowed: set[str], context: str) -
 
 
 def _text(value: Any, context: str) -> str:
-    if not isinstance(value, str) or not value.strip():
-        raise InputError(f"{context} must be a non-empty string")
-    return value.strip()
+    if (
+        not isinstance(value, str)
+        or not value
+        or value != value.strip()
+        or not value.isprintable()
+        or len(value) > 256
+    ):
+        raise InputError(f"{context} must be a portable non-empty string")
+    return value
 
 
 def _number(value: Any, context: str, *, minimum: float | None = None) -> float:
@@ -118,6 +127,11 @@ def _regression(raw: Any, context: str, contract: Contract | None) -> Regression
 
 def parse_policy(data: Mapping[str, Any], *, source_hash: str = "") -> Policy:
     """Build a validated policy from parsed TOML data."""
+    if source_hash and (
+        len(source_hash) != 64 or any(character not in _HEX_DIGEST for character in source_hash)
+    ):
+        raise InputError("policy source_hash must be empty or a lowercase SHA-256 digest")
+    check_data_complexity(data, "policy")
     _reject_unknown(
         data, {"schema_version", "case_keys", "numeric_epsilon", "missing", "metrics"}, "policy"
     )
@@ -133,8 +147,8 @@ def parse_policy(data: Mapping[str, Any], *, source_hash: str = "") -> Policy:
     if not isinstance(raw_case_keys, list) or not raw_case_keys:
         raise InputError("policy.case_keys must be a non-empty array")
     case_keys = tuple(_text(item, "policy.case_keys item") for item in raw_case_keys)
-    if len(case_keys) != len(set(case_keys)):
-        raise InputError("policy.case_keys contains duplicates")
+    if len(case_keys) != len({key.casefold() for key in case_keys}):
+        raise InputError("policy.case_keys contains duplicates ignoring case")
 
     raw_missing = _mapping(data.get("missing", {}), "policy.missing")
     _reject_unknown(
@@ -175,9 +189,10 @@ def parse_policy(data: Mapping[str, Any], *, source_hash: str = "") -> Policy:
             context,
         )
         name = _text(table.get("name"), f"{context}.name")
-        if name in names:
+        identity = name.casefold()
+        if identity in names:
             raise InputError(f"duplicate metric policy: {name}")
-        names.add(name)
+        names.add(identity)
         unit = validate_unit(_text(table.get("unit", "1"), f"{context}.unit"))
         reducer = _enum(Reducer, table.get("reduce", "mean"), f"{context}.reduce")
         severity = _enum(Severity, table.get("severity", "error"), f"{context}.severity")
@@ -193,13 +208,14 @@ def parse_policy(data: Mapping[str, Any], *, source_hash: str = "") -> Policy:
 
 def load_policy(path: str | Path) -> Policy:
     """Read and validate a TOML policy."""
-    source = Path(path)
-    try:
-        payload = source.read_bytes()
-    except OSError as error:
-        raise InputError(f"cannot read policy {source}: {error}") from error
+    source, payload = read_document(path, context="policy")
     try:
         data = tomllib.loads(payload.decode("utf-8"))
-    except (UnicodeDecodeError, tomllib.TOMLDecodeError) as error:
+    except (
+        UnicodeDecodeError,
+        tomllib.TOMLDecodeError,
+        RecursionError,
+        OverflowError,
+    ) as error:
         raise InputError(f"invalid TOML policy {source}: {error}") from error
     return parse_policy(data, source_hash=hashlib.sha256(payload).hexdigest())

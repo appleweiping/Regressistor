@@ -8,7 +8,8 @@ import sys
 from collections.abc import Sequence
 from pathlib import Path
 
-from regressistor import __version__
+from regressistor._strict_data import load_json_text
+from regressistor._version import __version__
 from regressistor.bundle import freeze_bundle, load_bundle
 from regressistor.errors import InputError, OutputError, RegressistorError
 from regressistor.gate import compare
@@ -20,13 +21,25 @@ from regressistor.render import console_summary, decision_text, write_artifacts
 from regressistor.report import load_report
 
 
+def _emit(text: object, *, error: bool = False) -> None:
+    """Write without leaking UnicodeEncodeError on narrow host encodings."""
+    stream = sys.stderr if error else sys.stdout
+    value = str(text)
+    encoding = getattr(stream, "encoding", None) or "utf-8"
+    try:
+        safe = value.encode(encoding, errors="backslashreplace").decode(encoding)
+    except LookupError:
+        safe = value.encode("ascii", errors="backslashreplace").decode("ascii")
+    print(safe, file=stream)
+
+
 def _validate(args: argparse.Namespace) -> int:
     policy = load_policy(args.policy)
     for bundle_path in args.bundle:
         bundle = load_bundle(bundle_path)
         index_bundle(bundle, policy)
     bundle_text = f" and {len(args.bundle)} bundle(s)" if args.bundle else ""
-    print(f"Validated policy{bundle_text}: {args.policy}")
+    _emit(f"Validated policy{bundle_text}: {args.policy}")
     return 0
 
 
@@ -37,8 +50,8 @@ def _check(args: argparse.Namespace) -> int:
         load_bundle(args.candidate),
     )
     paths = write_artifacts(report, args.out)
-    print(console_summary(report))
-    print("Artifacts: " + ", ".join(str(path) for path in paths))
+    _emit(console_summary(report))
+    _emit("Artifacts: " + ", ".join(str(path) for path in paths))
     return 0 if report.passed else 1
 
 
@@ -47,16 +60,16 @@ def _freeze(args: argparse.Namespace) -> int:
     if args.policy:
         index_bundle(bundle, load_policy(args.policy))
     target = freeze_bundle(bundle, args.out, force=args.force)
-    print(f"Frozen canonical baseline: {target}")
+    _emit(f"Frozen canonical baseline: {target}")
     return 0
 
 
 def _inspect(args: argparse.Namespace) -> int:
     inspection = inspect_bundle(load_policy(args.policy), load_bundle(args.bundle))
     if args.format == "json":
-        print(json.dumps(inspection.as_dict(), indent=2, sort_keys=True))
+        _emit(json.dumps(inspection.as_dict(), indent=2, sort_keys=True))
     else:
-        print(inspection_text(inspection))
+        _emit(inspection_text(inspection))
     return 0
 
 
@@ -64,18 +77,24 @@ def _parse_filter(raw: str) -> tuple[str, Scalar]:
     key, separator, value_text = raw.partition("=")
     if not separator or not key:
         raise InputError(f"case filter must have KEY=VALUE form: {raw!r}")
-    try:
-        value = json.loads(value_text)
-    except json.JSONDecodeError:
-        value = value_text
-    if isinstance(value, dict | list) or value is None:
+    value = load_json_text(
+        value_text,
+        context="case filter",
+        max_bytes=4_096,
+        fallback_text_on_syntax=True,
+    )
+    if not isinstance(value, bool | str | int | float):
         raise InputError(f"case filter value must be scalar: {raw!r}")
     return key, value
 
 
 def _explain(args: argparse.Namespace) -> int:
     report = load_report(args.report)
-    filters = dict(_parse_filter(raw) for raw in args.case)
+    parsed_filters = [_parse_filter(raw) for raw in args.case]
+    folded_keys = [key.casefold() for key, _ in parsed_filters]
+    if len(folded_keys) != len(set(folded_keys)):
+        raise InputError("case filters contain duplicate keys ignoring case")
+    filters = dict(parsed_filters)
     matches = []
     for decision in report.decisions:
         case = dict(decision.case)
@@ -89,7 +108,7 @@ def _explain(args: argparse.Namespace) -> int:
         matches.append(decision)
     if not matches:
         raise InputError("no report decision matched the supplied filters")
-    print("\n\n".join(decision_text(decision) for decision in matches))
+    _emit("\n\n".join(decision_text(decision) for decision in matches))
     return 0
 
 
@@ -140,14 +159,14 @@ def main(argv: Sequence[str] | None = None) -> int:
     try:
         return int(args.handler(args))
     except OutputError as error:
-        print(f"regressistor: output error: {error}", file=sys.stderr)
+        _emit(f"regressistor: output error: {error}", error=True)
         return 3
     except InputError as error:
-        print(f"regressistor: input error: {error}", file=sys.stderr)
+        _emit(f"regressistor: input error: {error}", error=True)
         return 2
     except RegressistorError as error:
-        print(f"regressistor: error: {error}", file=sys.stderr)
+        _emit(f"regressistor: error: {error}", error=True)
         return 3
     except OSError as error:
-        print(f"regressistor: I/O error: {error}", file=sys.stderr)
+        _emit(f"regressistor: I/O error: {error}", error=True)
         return 3

@@ -1,0 +1,49 @@
+schema_version = 1
+case_keys = ["CORNER", "VDD", "TEMP_C"]
+numeric_epsilon = 1e-15
+
+[missing]
+baseline_case = "error"
+candidate_case = "error"
+baseline_metric = "error"
+candidate_metric = "error"
+
+[[metrics]]
+name = "gain_100khz"
+unit = "1"
+reduce = "mean"
+severity = "error"
+contract = { kind = "range", lower = 1.0, upper = 5.0 }
+regression = { direction = "higher", relative_budget = 0.001, relative_floor = 1e-9 }
+
+[[metrics]]
+name = "output_pp_v"
+unit = "V"
+reduce = "mean"
+severity = "error"
+contract = { kind = "range", lower = 0.002, upper = 0.01 }
+regression = { direction = "higher", relative_budget = 0.001, relative_floor = 1e-9 }
+
+[[metrics]]
+name = "output_v"
+unit = "V"
+reduce = "mean"
+severity = "error"
+contract = { kind = "range", lower = 1.0, upper = 2.1 }
+regression = { direction = "higher", relative_budget = 0.001, relative_floor = 1e-9 }
+
+[[metrics]]
+name = "power_w"
+unit = "W"
+reduce = "mean"
+severity = "error"
+contract = { kind = "range", lower = 1e-6, upper = 1e-4 }
+regression = { direction = "lower", relative_budget = 0.001, relative_floor = 1e-12 }
+
+[[metrics]]
+name = "supply_current_a"
+unit = "A"
+reduce = "mean"
+severity = "error"
+contract = { kind = "range", lower = 1e-6, upper = 5e-5 }
+regression = { direction = "lower", relative_budget = 0.001, relative_floor = 1e-12 }

@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="445" viewBox="0 0 1120 445" role="img" aria-labelledby="title description">
+  <title id="title">Regressistor real command-line demonstration</title>
+  <desc id="description">A real regression gate reports eight passes and two specification failures, then explains the phase-margin failure.</desc>
+  <rect width="1120" height="445" rx="14" fill="#0d1117"/>
+  <rect width="1120" height="42" rx="14" fill="#161b22"/>
+  <circle cx="24" cy="21" r="6" fill="#ff7b72"/>
+  <circle cx="45" cy="21" r="6" fill="#d29922"/>
+  <circle cx="66" cy="21" r="6" fill="#3fb950"/>
+  <text x="90" y="27" fill="#8b949e" font-family="Consolas,monospace" font-size="14">Regressistor — actual CLI gate and explanation</text>
+  <g fill="#c9d1d9" font-family="Consolas,monospace" font-size="15">
+    <text x="24" y="72"><tspan fill="#7ee787">PS&gt;</tspan> python -m regressistor check --policy examples\opamp\policy.toml `</text>
+    <text x="24" y="97">    --baseline examples\opamp\baseline.json --candidate examples\opamp\candidate.json `</text>
+    <text x="24" y="122">    --out artifacts\readme-demo</text>
+    <text x="24" y="153" fill="#ff7b72">Regressistor FAIL: 10 decisions (pass=8, spec_fail=2)</text>
+    <text x="24" y="178">Artifacts: artifacts\readme-demo\report.json, artifacts\readme-demo\summary.md, artifacts\readme-demo\junit.xml</text>
+    <text x="24" y="212"><tspan fill="#7ee787">PS&gt;</tspan> python -m regressistor explain --report artifacts\readme-demo\report.json `</text>
+    <text x="24" y="237">    --metric phase_margin --case process=ss --case vdd=0.9 --case temp_c=125</text>
+    <text x="24" y="268">metric: phase_margin</text>
+    <text x="24" y="290">case: process="ss",vdd=0.9,temp_c=125</text>
+    <text x="24" y="312" fill="#ff7b72">status: spec_fail</text>
+    <text x="24" y="334">baseline: 61.8 deg</text>
+    <text x="24" y="356">candidate: 58.9 deg</text>
+    <text x="24" y="378">contract margin: -1.1 deg</text>
+    <text x="24" y="400">regression margin: -1.9 deg</text>
+    <text x="24" y="422">reason: contract margin -1.1 deg is below zero</text>
+  </g>
+</svg>

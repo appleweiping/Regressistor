@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "run": {
+    "id": "synthetic-baseline",
+    "note": "Generated example values; not silicon measurements"
+  },
+  "points": [
+    {
+      "case": {"process": "tt", "vdd": 1.0, "temp_c": 27},
+      "sample": 0,
+      "metrics": {
+        "dc_gain": {"value": 68.4, "unit": "dB"},
+        "ugbw": {"value": 28400000, "unit": "Hz"},
+        "phase_margin": {"value": 66.2, "unit": "deg"},
+        "quiescent_current": {"value": 174.0, "unit": "uA"},
+        "slew_rate": {"value": 13.2, "unit": "V/us"}
+      }
+    },
+    {
+      "case": {"process": "ss", "vdd": 0.9, "temp_c": 125},
+      "sample": 0,
+      "metrics": {
+        "dc_gain": {"value": 63.1, "unit": "dB"},
+        "ugbw": {"value": 22.6, "unit": "MHz"},
+        "phase_margin": {"value": 61.8, "unit": "deg"},
+        "quiescent_current": {"value": 181.0, "unit": "uA"},
+        "slew_rate": {"value": 10.8, "unit": "V/us"}
+      }
+    }
+  ]
+}

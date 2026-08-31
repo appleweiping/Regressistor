@@ -1,0 +1,42 @@
+name: Bug report
+description: Report reproducible incorrect behavior in Regressistor.
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Thank you for providing a minimal synthetic reproducer.
+  - type: input
+    id: version
+    attributes:
+      label: Regressistor version
+      placeholder: "0.1.0"
+    validations:
+      required: true
+  - type: input
+    id: python
+    attributes:
+      label: Python and operating system
+      placeholder: "Python 3.12.5 on Ubuntu 24.04"
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Minimal reproduction
+      description: Include commands and synthetic policy or bundle fragments.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected and actual behavior
+    validations:
+      required: true
+  - type: checkboxes
+    id: safe-data
+    attributes:
+      label: Data confirmation
+      options:
+        - label: The report contains no confidential PDK or measurement data.
+          required: true

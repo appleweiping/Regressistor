@@ -1,0 +1,48 @@
+schema_version = 1
+case_keys = ["process", "vdd", "temp_c"]
+numeric_epsilon = 1e-12
+
+[missing]
+baseline_case = "error"
+candidate_case = "error"
+baseline_metric = "error"
+candidate_metric = "error"
+
+[[metrics]]
+name = "dc_gain"
+unit = "dB"
+reduce = "min"
+severity = "error"
+contract = { kind = "min", limit = 60.0 }
+regression = { direction = "higher", absolute_budget = 0.5 }
+
+[[metrics]]
+name = "ugbw"
+unit = "MHz"
+reduce = "mean"
+severity = "error"
+contract = { kind = "min", limit = 20.0 }
+regression = { direction = "higher", absolute_budget = 0.5, relative_budget = 0.02, relative_floor = 1.0 }
+
+[[metrics]]
+name = "phase_margin"
+unit = "deg"
+reduce = "min"
+severity = "error"
+contract = { kind = "min", limit = 60.0 }
+regression = { direction = "higher", absolute_budget = 1.0 }
+
+[[metrics]]
+name = "quiescent_current"
+unit = "uA"
+reduce = "max"
+severity = "error"
+contract = { kind = "max", limit = 200.0 }
+regression = { direction = "lower", absolute_budget = 3.0, relative_budget = 0.05, relative_floor = 1.0 }
+
+[[metrics]]
+name = "slew_rate"
+unit = "V/us"
+reduce = "min"
+severity = "warning"
+contract = { kind = "min", limit = 10.0 }

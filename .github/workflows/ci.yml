@@ -48,7 +48,7 @@ jobs:
       - if: matrix.quality
         run: uv run --frozen mypy --python-version 3.11 src
       - if: matrix.quality
-        run: uv run --frozen bandit -q -r src
+        run: uv run --frozen bandit -q -c pyproject.toml -r src
       - run: uv run --frozen pytest --cov=regressistor --cov-report=term-missing --cov-report=xml
       - if: matrix.quality
         run: uv run --frozen python -m build

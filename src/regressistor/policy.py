@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any
 
 from regressistor._strict_data import check_data_complexity, read_document
+from regressistor.dispersion import DEFAULT_MIN_NOISE_SAMPLES, MIN_NOISE_SAMPLES
 from regressistor.errors import InputError
 from regressistor.model import (
     Contract,
@@ -66,6 +67,16 @@ def _number(value: Any, context: str, *, minimum: float | None = None) -> float:
     return result
 
 
+def _integer(value: Any, context: str, *, minimum: int) -> int:
+    """Accept a whole number only, since a count of repeats has no fraction."""
+
+    if isinstance(value, bool) or not isinstance(value, int):
+        raise InputError(f"{context} must be an integer")
+    if value < minimum:
+        raise InputError(f"{context} must be at least {minimum}")
+    return value
+
+
 def _enum(enum_type: type[Any], value: Any, context: str) -> Any:
     try:
         return enum_type(value)
@@ -107,7 +118,14 @@ def _regression(raw: Any, context: str, contract: Contract | None) -> Regression
         return None
     table = _mapping(raw, context)
     direction = _enum(Direction, table.get("direction"), f"{context}.direction")
-    allowed = {"direction", "absolute_budget", "relative_budget", "relative_floor"}
+    allowed = {
+        "direction",
+        "absolute_budget",
+        "relative_budget",
+        "relative_floor",
+        "noise_budget",
+        "noise_min_samples",
+    }
     if direction is Direction.TARGET:
         allowed.add("target")
     _reject_unknown(table, allowed, context)
@@ -116,13 +134,21 @@ def _regression(raw: Any, context: str, contract: Contract | None) -> Regression
     relative_floor = _number(
         table.get("relative_floor", 0.0), f"{context}.relative_floor", minimum=0.0
     )
+    noise = _number(table.get("noise_budget", 0.0), f"{context}.noise_budget", minimum=0.0)
+    noise_min_samples = _integer(
+        table.get("noise_min_samples", DEFAULT_MIN_NOISE_SAMPLES),
+        f"{context}.noise_min_samples",
+        minimum=MIN_NOISE_SAMPLES,
+    )
     target: float | None = None
     if direction is Direction.TARGET:
         raw_target = table.get("target")
         if raw_target is None and contract and contract.kind is ContractKind.TARGET:
             raw_target = contract.target
         target = _number(raw_target, f"{context}.target")
-    return RegressionBudget(direction, absolute, relative, relative_floor, target)
+    return RegressionBudget(
+        direction, absolute, relative, relative_floor, target, noise, noise_min_samples
+    )
 
 
 def parse_policy(data: Mapping[str, Any], *, source_hash: str = "") -> Policy:
@@ -200,6 +226,17 @@ def parse_policy(data: Mapping[str, Any], *, source_hash: str = "") -> Policy:
         regression = _regression(table.get("regression"), f"{context}.regression", contract)
         if contract is None and regression is None:
             raise InputError(f"{context} must define contract, regression, or both")
+        if regression is not None and regression.noise_gated and reducer is not Reducer.MEAN:
+            # The noise budget is expressed in standard errors of the mean, and
+            # that is the only reducer whose run-to-run variability it
+            # describes. An extreme such as max or p95 moves far more between
+            # identical runs than the mean does, so scaling its change by the
+            # standard error of the mean would understate the noise and fire on
+            # scatter -- the failure this budget exists to prevent.
+            raise InputError(
+                f'{context}.regression.noise_budget requires reduce = "mean"; '
+                f"the standard error does not describe the scatter of {reducer.value}"
+            )
         metrics.append(MetricPolicy(name, unit, reducer, severity, contract, regression))
 
     epsilon = _number(data.get("numeric_epsilon", 1e-12), "policy.numeric_epsilon", minimum=0.0)

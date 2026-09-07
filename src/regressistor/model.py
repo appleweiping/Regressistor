@@ -6,6 +6,8 @@ from dataclasses import dataclass, field
 from enum import StrEnum
 from typing import Any, TypeAlias
 
+from regressistor.dispersion import NoiseAssessment
+
 Scalar: TypeAlias = str | int | float | bool
 CaseKey: TypeAlias = tuple[tuple[str, Scalar], ...]
 ScalarIdentity: TypeAlias = tuple[str, Scalar]
@@ -85,6 +87,14 @@ class RegressionBudget:
     relative: float = 0.0
     relative_floor: float = 0.0
     target: float | None = None
+    noise: float = 0.0
+    noise_min_samples: int = 3
+
+    @property
+    def noise_gated(self) -> bool:
+        """Whether this budget also asks how large the change is against noise."""
+
+        return self.noise > 0.0
 
 
 @dataclass(frozen=True, slots=True)
@@ -150,6 +160,7 @@ class Decision:
     regression_margin: float | None = None
     adverse_change: float | None = None
     allowed_change: float | None = None
+    noise: NoiseAssessment | None = None
 
     def as_dict(self) -> dict[str, Any]:
         return {
@@ -166,4 +177,5 @@ class Decision:
             "regression_margin": self.regression_margin,
             "adverse_change": self.adverse_change,
             "allowed_change": self.allowed_change,
+            "noise": self.noise.as_dict() if self.noise else None,
         }

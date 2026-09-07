@@ -2,6 +2,35 @@
 
 All notable changes are recorded here. Versions follow semantic versioning.
 
+## Unreleased
+
+### Added
+
+- `noise_budget` on a regression policy: a second condition, expressed in standard errors of
+  the difference rather than in the metric's own units. A change is a regression only when it
+  exceeds both the magnitude budget and the noise budget, so a change too small to care about
+  and a change too small to tell from scatter are both allowed through. The scatter comes from
+  repeated `sample` points on each side and is combined with Welch's standard error, which does
+  not assume the frozen baseline and the candidate scatter equally.
+- `noise_min_samples` states how many repeats a side the estimate needs. Below it the noise
+  budget is skipped and the decision says so; the magnitude test then stands alone, which can
+  only make the gate stricter than the policy asked for.
+- Every decision now carries the dispersion of both sides -- count, mean, deviation, span and
+  standard error -- whether or not a noise budget is set, because the numbers needed to choose
+  a budget are the ones available before it exists.
+- `regressistor.dispersion` as a Python API: `describe`, `assess`, `difference_standard_error`,
+  `welch_degrees_of_freedom`, and `standardize`.
+
+### Changed
+
+- A report result carries a `noise` object, validated as strictly as the rest of the schema: a
+  stored standard error that disagrees with its own deviation and count is rejected rather than
+  trusted, as is scatter claimed from a single measurement.
+- A `noise_budget` requires `reduce = "mean"`. The budget counts standard errors of the mean,
+  and an extreme such as `max` or `p95` moves far more between identical runs than the mean
+  does, so applying the mean's error to it would understate the noise and fire on scatter. The
+  combination is rejected in the policy parser rather than quietly approximated.
+
 ## 0.2.0 - 2026-08-31
 
 - Added a versioned SimCairn measurement-bundle interoperability benchmark,

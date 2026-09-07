@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any, cast
 
 from regressistor._strict_data import check_data_complexity, load_json_path
+from regressistor.dispersion import Dispersion, NoiseAssessment
 from regressistor.errors import InputError, OutputError
 from regressistor.model import CaseKey, Decision, Scalar, Severity, Status, case_identity
 from regressistor.units import validate_unit
@@ -40,6 +41,7 @@ _RESULT_FIELDS = {
     "regression_margin",
     "adverse_change",
     "allowed_change",
+    "noise",
 }
 _HEX = frozenset("0123456789abcdef")
 
@@ -123,6 +125,83 @@ def _text(value: Any, context: str) -> str:
 def _exact(value: dict[str, Any], fields: set[str], context: str) -> None:
     if set(value) != fields:
         raise InputError(f"{context} fields are invalid")
+
+
+_DISPERSION_FIELDS = {"count", "mean", "deviation", "span", "standard_error"}
+_NOISE_FIELDS = {
+    "baseline",
+    "candidate",
+    "standard_error",
+    "standardized_change",
+    "degrees_of_freedom",
+    "applicable",
+    "reason",
+}
+
+
+def _dispersion(value: Any, context: str) -> Dispersion:
+    if not isinstance(value, dict):
+        raise InputError(f"{context} must be an object")
+    _exact(value, _DISPERSION_FIELDS, context)
+    count = value.get("count")
+    if isinstance(count, bool) or not isinstance(count, int) or count < 1:
+        raise InputError(f"{context}.count must be a positive integer")
+    mean = _optional_float(value.get("mean"), f"{context}.mean")
+    deviation = _optional_float(value.get("deviation"), f"{context}.deviation")
+    span = _optional_float(value.get("span"), f"{context}.span")
+    if mean is None or deviation is None or span is None:
+        raise InputError(f"{context} requires mean, deviation and span")
+    if deviation < 0.0 or span < 0.0:
+        raise InputError(f"{context} deviation and span must not be negative")
+    if count == 1 and (deviation != 0.0 or span != 0.0):
+        raise InputError(f"{context} single measurement cannot have scatter")
+    # `standard_error` is derived from the other two, so it is checked rather
+    # than trusted: a report whose stored value disagrees is not this report.
+    dispersion = Dispersion(count=count, mean=mean, deviation=deviation, span=span)
+    stored = _optional_float(value.get("standard_error"), f"{context}.standard_error")
+    if stored is None or not math.isclose(
+        stored, dispersion.standard_error, rel_tol=1e-9, abs_tol=1e-15
+    ):
+        raise InputError(f"{context}.standard_error disagrees with the deviation and count")
+    return dispersion
+
+
+def _noise(value: Any, context: str) -> NoiseAssessment | None:
+    if value is None:
+        return None
+    if not isinstance(value, dict):
+        raise InputError(f"{context} must be an object or null")
+    _exact(value, _NOISE_FIELDS, context)
+    applicable = value.get("applicable")
+    if not isinstance(applicable, bool):
+        raise InputError(f"{context}.applicable must be boolean")
+    reason = _text(value.get("reason"), f"{context}.reason")
+    if len(reason) > 256:
+        raise InputError(f"{context}.reason must be at most 256 characters")
+    raw_baseline = value.get("baseline")
+    baseline = _dispersion(raw_baseline, f"{context}.baseline") if raw_baseline else None
+    candidate = _dispersion(value.get("candidate"), f"{context}.candidate")
+    standard_error = _optional_float(value.get("standard_error"), f"{context}.standard_error")
+    if standard_error is not None and standard_error < 0.0:
+        raise InputError(f"{context}.standard_error must not be negative")
+    degrees_of_freedom = _optional_float(
+        value.get("degrees_of_freedom"), f"{context}.degrees_of_freedom"
+    )
+    if degrees_of_freedom is not None and degrees_of_freedom < 0.0:
+        raise InputError(f"{context}.degrees_of_freedom must not be negative")
+    if applicable and baseline is None:
+        raise InputError(f"{context} cannot be applicable without a baseline")
+    return NoiseAssessment(
+        baseline=baseline,
+        candidate=candidate,
+        standard_error=standard_error,
+        standardized_change=_optional_float(
+            value.get("standardized_change"), f"{context}.standardized_change"
+        ),
+        degrees_of_freedom=degrees_of_freedom,
+        applicable=applicable,
+        reason=reason,
+    )
 
 
 def _digest(value: Any, context: str) -> str:
@@ -236,6 +315,9 @@ def report_from_dict(data: Any) -> Report:
         )
         adverse_change = _optional_float(raw.get("adverse_change"), f"{context}.adverse_change")
         allowed_change = _optional_float(raw.get("allowed_change"), f"{context}.allowed_change")
+        noise = _noise(raw.get("noise"), f"{context}.noise")
+        if status in {Status.MISSING, Status.INVALID} and noise is not None:
+            raise InputError(f"{context} {status.value} result must not contain a noise block")
         numeric_values = (
             baseline,
             candidate,
@@ -284,6 +366,7 @@ def report_from_dict(data: Any) -> Report:
                 regression_margin=regression_margin,
                 adverse_change=adverse_change,
                 allowed_change=allowed_change,
+                noise=noise,
             )
         )
     policy_hash = _digest(inputs.get("policy_sha256", ""), "report.inputs.policy_sha256")

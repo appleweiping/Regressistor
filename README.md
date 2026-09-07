@@ -99,6 +99,92 @@ Repeated points with the same case must have distinct `sample` values. Their
 measurements are reduced with `min`, `max`, `mean`, `median`, `p05`, or `p95`
 before comparison.
 
+### Regressions inside the measurement noise
+
+A budget stated only as a magnitude has no relationship to how much the metric
+moves between identical runs. The same one percent is far too tight for a
+metric that scatters three percent and far too loose for one that repeats to a
+part in ten thousand: the first fails constantly until somebody switches the
+gate off, and the second lets a twenty-sigma shift through in silence.
+
+`noise_budget` adds a second condition in units the measurement supplies
+itself:
+
+```toml
+[[metrics]]
+name = "gain"
+unit = "dB"
+reduce = "mean"
+severity = "error"
+regression = { direction = "higher", relative_budget = 0.01, noise_budget = 3.0, noise_min_samples = 6 }
+```
+
+A change is a regression only when it exceeds **both** budgets. The magnitude
+budget says what is too small to care about; the noise budget says what is too
+small to distinguish from scatter. A change that is statistically clear but
+immaterial should not block a merge, and neither should one that is material
+but indistinguishable from the noise.
+
+The scatter is estimated from repeated `sample` points on both sides and
+combined with Welch's standard error, which does not assume the two sides
+scatter equally. A baseline frozen from an older simulator, machine or seed set
+has no reason to share a variance with the candidate, and pooling them would
+report a precision neither has.
+
+#### What it changes
+
+A metric scattering 2% run to run, six repeats a side, a 1% materiality budget
+and a 3-standard-error noise budget, over 120 frozen baselines and 80 clean
+candidate runs each, with **no real change present**:
+
+| gate | mean false alarms | median | worst decile | worst baseline |
+|---|---:|---:|---:|---:|
+| magnitude only | 21.0% | 13.8% | 61.3% | 81.2% |
+| with `noise_budget` | 0.8% | 0.0% | 2.5% | 15.0% |
+
+Twelve of those 120 baselines make the magnitude-only gate fire on more than
+half of all clean runs; none do with the noise budget. That spread matters more
+than the average, because the baseline is frozen: its own sampling error is not
+re-drawn per comparison, so an unlucky baseline poisons every future run until
+somebody re-baselines.
+
+The cost is real and in the other direction. Detection of a genuine shift falls
+where the shift is comparable to the noise, and repeats buy it back:
+
+| repeats a side | false alarm | detects a 1.5% shift | detects a 3% shift |
+|---:|---:|---:|---:|
+| 3 | 2.2% | 9.2% | 25.4% |
+| 6 | 1.6% | 6.2% | 38.0% |
+| 12 | 0.6% | 17.6% | 78.2% |
+| 25 | 0.6% | 36.6% | 99.0% |
+| 50 | 0.2% | 79.4% | 100.0% |
+
+Adding repeats improves both columns at once, which is the useful reading: a
+noise-gated policy that misses real regressions is asking for more samples, not
+for a looser budget.
+
+#### Limits worth knowing
+
+- The budget counts standard errors of the **mean**, so it requires
+  `reduce = "mean"`. An extreme such as `max` or `p95` moves far more between
+  identical runs than the mean does, and scaling its change by the mean's
+  standard error would understate the noise and fire on scatter. A policy that
+  asks for both is rejected rather than quietly approximated.
+- Below `noise_min_samples` repeats on the thinner side, a standard deviation
+  is not an estimate of anything. The noise budget is then skipped and the
+  decision message says so. The magnitude test standing alone can only make the
+  gate stricter than the policy asked for, never looser.
+- A metric that repeats exactly has no measurable scatter, which is the
+  ordinary case for a deterministic simulator run several times. Any change in
+  it is beyond its scatter, so the noise budget adds nothing and the magnitude
+  budget decides.
+- The dispersion of both sides is reported on every decision whether or not a
+  noise budget is set, since the numbers needed to choose one are exactly the
+  ones available before it exists.
+- None of this is a hypothesis test. The standardized change is a descriptive
+  ratio compared against a threshold the policy states outright, not a p-value.
+
+
 Audit case and metric coverage before a gate with:
 
 ```bash
@@ -189,6 +275,9 @@ report.write_json("report.json")
 - Exact case matching after projection onto declared case keys.
 - Explicit dimensional conversion; incompatible units fail visibly.
 - Improvement cannot be classified as an adverse regression.
+- A regression may be required to exceed the measurement's own run-to-run
+  scatter as well as a stated magnitude, so a frozen baseline's sampling error
+  does not become a permanent source of false alarms.
 - Stable ordering and serialization for identical inputs.
 - Input objects are never mutated.
 

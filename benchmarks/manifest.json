@@ -5,7 +5,7 @@
   "contract": "regressistor.measurement-bundle/2",
   "runtime": {
     "distribution_version": "0.2.0",
-    "package_tree_sha256": "9ba11543644a4cb14643dd34ddff20d564c494bb454495892a4f2e0d884641c3",
+    "package_tree_sha256": "d0841063df37bdc5824e384bc876b6805ec732d4a17747e7e7bf52c2d246e0c8",
     "harness_sha256": "d6532bdcbef7260b094ba1c58ed180c250b98769642901940b737e5475294c3d"
   },
   "schema": {

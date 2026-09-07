@@ -5,6 +5,8 @@ from __future__ import annotations
 import math
 from collections.abc import Iterable
 
+from regressistor.dispersion import DEFAULT_MIN_NOISE_SAMPLES, NoiseAssessment
+from regressistor.dispersion import assess as assess_noise
 from regressistor.errors import InputError
 from regressistor.matching import index_bundle, sorted_cases
 from regressistor.model import (
@@ -28,9 +30,12 @@ from regressistor.report import MAX_DECISIONS, Report
 from regressistor.units import convert
 
 
+def _converted(samples: Iterable[Measurement], metric: MetricPolicy) -> list[float]:
+    return [convert(sample.value, sample.unit, metric.unit) for sample in samples]
+
+
 def _measure(samples: Iterable[Measurement], metric: MetricPolicy) -> float:
-    converted = (convert(sample.value, sample.unit, metric.unit) for sample in samples)
-    return reduce_values(converted, metric.reducer)
+    return reduce_values(_converted(samples, metric), metric.reducer)
 
 
 def _contract_margin(value: float, contract: Contract) -> float:
@@ -109,6 +114,35 @@ def _invalid_decision(metric: MetricPolicy, case: CaseKey, message: str) -> Deci
     )
 
 
+def _noise_verdict(
+    noise: NoiseAssessment | None, budget: RegressionBudget | None
+) -> tuple[bool, str]:
+    """Decide whether run-to-run scatter explains an adverse change.
+
+    Returns whether the change survives the noise test and the phrase that
+    describes why. A budget that cannot be assessed does not silently pass:
+    the magnitude test then stands alone, which can only make the gate stricter
+    than the policy asked for, never looser, and the decision message says so.
+    """
+
+    if budget is None or not budget.noise_gated:
+        return True, ""
+    if noise is None or not noise.applicable:
+        reason = noise.reason if noise else "no measurements to assess"
+        return True, f"; noise budget not applied because {reason}"
+    standardized = noise.standardized_change
+    if standardized is None:
+        # A report read back from JSON cannot carry an unbounded ratio, and the
+        # magnitude test standing alone is the stricter of the two readings.
+        return True, "; change could not be expressed in units of scatter"
+    if standardized <= budget.noise:
+        return False, (
+            f"; change is {standardized:.4g} standard errors, within the "
+            f"{budget.noise:.4g} the policy attributes to run-to-run scatter"
+        )
+    return True, f"; change is {standardized:.4g} standard errors of run-to-run scatter"
+
+
 def _evaluate(
     metric: MetricPolicy,
     case: CaseKey,
@@ -117,8 +151,10 @@ def _evaluate(
     epsilon: float,
 ) -> Decision:
     try:
-        candidate = _measure(candidate_samples, metric)
-        baseline = _measure(baseline_samples, metric) if baseline_samples else None
+        candidate_values = _converted(candidate_samples, metric)
+        baseline_values = _converted(baseline_samples, metric) if baseline_samples else None
+        candidate = reduce_values(candidate_values, metric.reducer)
+        baseline = reduce_values(baseline_values, metric.reducer) if baseline_values else None
     except InputError as error:
         return _invalid_decision(metric, case, str(error))
 
@@ -136,17 +172,41 @@ def _evaluate(
     except (ArithmeticError, InputError) as error:
         return _invalid_decision(metric, case, str(error))
 
+    try:
+        noise = assess_noise(
+            baseline_values,
+            candidate_values,
+            adverse,
+            min_samples=(
+                metric.regression.noise_min_samples
+                if metric.regression is not None
+                else DEFAULT_MIN_NOISE_SAMPLES
+            ),
+        )
+    except InputError as error:
+        return _invalid_decision(metric, case, str(error))
+    beyond_noise, noise_note = _noise_verdict(noise, metric.regression)
+
     if contract_margin is not None and contract_margin < -epsilon:
+        # A contract is a statement about the measurement, not about the change
+        # between two of them, so scatter does not excuse breaching one.
         status = Status.SPEC_FAIL
         message = f"contract margin {contract_margin:.12g} {metric.unit} is below zero"
-    elif regression_margin is not None and regression_margin < -epsilon:
+    elif regression_margin is not None and regression_margin < -epsilon and beyond_noise:
         status = Status.REGRESSION
         message = (
-            f"adverse change {adverse:.12g} exceeds allowed change {allowed:.12g} {metric.unit}"
+            f"adverse change {adverse:.12g} exceeds allowed change {allowed:.12g} "
+            f"{metric.unit}{noise_note}"
+        )
+    elif regression_margin is not None and regression_margin < -epsilon:
+        status = Status.PASS
+        message = (
+            f"adverse change {adverse:.12g} exceeds allowed change {allowed:.12g} "
+            f"{metric.unit} but is not distinguishable from noise{noise_note}"
         )
     else:
         status = Status.PASS
-        message = "contract and regression checks passed"
+        message = f"contract and regression checks passed{noise_note}"
 
     blocking = status is not Status.PASS and metric.severity is Severity.ERROR
     return Decision(
@@ -163,6 +223,7 @@ def _evaluate(
         regression_margin=regression_margin,
         adverse_change=adverse,
         allowed_change=allowed,
+        noise=noise,
     )
 
 

@@ -4,6 +4,8 @@ All notable changes are recorded here. Versions follow semantic versioning.
 
 ## Unreleased
 
+## 0.3.0 - 2026-09-07
+
 ### Added
 
 - `noise_budget` on a regression policy: a second condition, expressed in standard errors of

@@ -15,7 +15,7 @@ permissions:
 
 env:
   RELEASE_PROJECT_NAME: regressistor
-  RELEASE_PROJECT_VERSION: "0.4.0"
+  RELEASE_PROJECT_VERSION: "0.4.1"
   RELEASE_SYFT_VERSION: "1.51.1"
 
 jobs:
@@ -148,7 +148,7 @@ jobs:
       - name: Validate distribution metadata and shape
         run: |
           uv run --frozen python -m twine check --strict dist/*
-          python - <<'PY'
+          uv run --frozen python -I - <<'PY'
           import tarfile
           import zipfile
           from pathlib import Path

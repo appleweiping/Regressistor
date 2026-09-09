@@ -2,6 +2,16 @@
 
 All notable changes are recorded here. Versions follow semantic versioning.
 
+## 0.4.1 - 2026-09-09
+
+### Fixed
+
+- Run the release archive audit with the frozen project's isolated Python, not the
+  separate system interpreter. The signed v0.4.0 workflow stopped with an import
+  error before attestation or publication, so no GitHub release assets were published
+  for that tag. The tag is preserved; this patch uses a new version. A workflow
+  regression inspects every project-importing Python heredoc's interpreter binding.
+
 ## 0.4.0 - 2026-09-07
 
 ### Added

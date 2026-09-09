@@ -46,7 +46,9 @@ def test_dco_runs_only_the_trusted_base_verifier_and_binds_every_pr_identity() -
     assert "python -I src/regressistor/dco.py" in dco
     assert "PYTHONPATH:" not in dco
     assert "ref: ${{ github.event.pull_request.head.sha }}" not in dco
-    assert "# Transitional check" in ci
+    assert "# Transitional check" not in ci
+    assert "  dco:" not in ci
+    assert "pull_request_target:" not in ci
 
 
 def test_release_accepts_only_successful_main_push_ci_for_the_exact_tag_commit() -> None:

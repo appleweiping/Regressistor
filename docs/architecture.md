@@ -2,9 +2,10 @@
 
 ## Boundary
 
-Regressistor starts after simulation or measurement extraction. Producers write
-strict JSON bundles; Regressistor validates, aligns, compares, and renders. It
-never launches a simulator and has no plug-in execution surface.
+Regressistor normally starts after simulation or measurement extraction. Producers write strict
+JSON bundles; Regressistor validates, aligns, compares, and renders. A bounded Liberty NLDM import
+boundary can also turn already-characterized timing-library data into the same generic v1 bundle.
+It never launches a simulator and has no plug-in execution surface.
 
 ```text
 policy.toml -----> policy parser -----------+
@@ -12,11 +13,13 @@ policy.toml -----> policy parser -----------+
 baseline.json --> bundle parser --> index ---+--> gate --> immutable report
                                              |               |  |  |
 candidate.json -> bundle parser --> index ---+              JSON MD JUnit
+
+Liberty NLDM --> strict data parser --> generic v1 bundle
 ```
 
 ## Validation layers
 
-Parsing has three separate responsibilities:
+Parsing has four separate responsibilities:
 
 1. Policy validation rejects unsupported fields, incomplete contracts,
    negative budgets, duplicate metric names, and unknown units.
@@ -24,6 +27,9 @@ Parsing has three separate responsibilities:
    values, unknown fields, and malformed measurement objects.
 3. Comparison validation projects every case onto the policy keys and verifies
    unit compatibility when a configured metric is consumed.
+4. Liberty import validates syntax, units, PVT selection, lookup dimensions,
+   semantic uniqueness, source identity, and resource consumption before it
+   constructs a bundle accepted by layer 2.
 
 Keeping those layers separate allows `validate` to identify structural errors
 without running a gate.
@@ -67,6 +73,7 @@ This permits byte-for-byte report comparison when inputs are unchanged.
 
 Input files are data, never programs. TOML has no expression field. JSON report
 labels are escaped by the provided HTML helper, while XML construction uses the
-standard library element API. Output overwrite behavior is explicit for frozen
-baselines. File paths remain under caller control and are not expanded through
-a shell.
+standard library element API. Every file writer is atomic and no-clobber by default; the JSON,
+Markdown, and JUnit report set is staged and rolled back as one transaction. Explicit
+replacement cannot target an input alias. File paths remain under caller control and are not
+expanded through a shell.

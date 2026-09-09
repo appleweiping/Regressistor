@@ -6,6 +6,7 @@ import html
 import xml.etree.ElementTree as ET  # nosec B405
 from pathlib import Path
 
+from regressistor._output import atomic_write_many
 from regressistor.bundle import case_label
 from regressistor.errors import OutputError
 from regressistor.model import Decision, Status
@@ -125,15 +126,30 @@ def junit_xml(report: Report) -> str:
     return ET.tostring(suite, encoding="unicode", xml_declaration=True) + "\n"
 
 
-def write_artifacts(report: Report, directory: str | Path) -> tuple[Path, Path, Path]:
+def write_artifacts(
+    report: Report,
+    directory: str | Path,
+    *,
+    force: bool = False,
+    protected: tuple[str | Path, ...] = (),
+) -> tuple[Path, Path, Path]:
     target = Path(directory)
     try:
-        target.mkdir(parents=True, exist_ok=True)
-        json_path = report.write_json(target / "report.json")
+        json_path = target / "report.json"
         markdown_path = target / "summary.md"
         junit_path = target / "junit.xml"
-        markdown_path.write_text(markdown(report), encoding="utf-8")
-        junit_path.write_text(junit_xml(report), encoding="utf-8")
+        atomic_write_many(
+            (
+                (json_path, report.json_bytes()),
+                (markdown_path, markdown(report).encode("utf-8")),
+                (junit_path, junit_xml(report).encode("utf-8")),
+            ),
+            context="report artifact",
+            force=force,
+            protected=protected,
+        )
+    except OutputError:
+        raise
     except OSError as error:
         raise OutputError(f"cannot write artifacts under {target}: {error}") from error
     return json_path, markdown_path, junit_path

@@ -5,10 +5,12 @@ from __future__ import annotations
 import json
 import math
 from collections import Counter
+from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, cast
 
+from regressistor._output import atomic_write_bytes
 from regressistor._strict_data import check_data_complexity, load_json_path
 from regressistor.dispersion import Dispersion, NoiseAssessment
 from regressistor.errors import InputError, OutputError
@@ -81,18 +83,35 @@ class Report:
             "results": [decision.as_dict() for decision in self.decisions],
         }
 
-    def write_json(self, path: str | Path) -> Path:
+    def json_bytes(self) -> bytes:
+        """Return validated, bounded canonical report bytes."""
+
+        data = self.to_dict()
+        report_from_dict(data)
+        payload = (json.dumps(data, indent=2, sort_keys=True, allow_nan=False) + "\n").encode(
+            "utf-8"
+        )
+        if len(payload) > MAX_REPORT_BYTES:
+            raise OutputError(f"report exceeds {MAX_REPORT_BYTES} byte serialized output limit")
+        return payload
+
+    def write_json(
+        self,
+        path: str | Path,
+        *,
+        force: bool = False,
+        protected: Iterable[str | Path] = (),
+    ) -> Path:
         target = Path(path)
         try:
             target.parent.mkdir(parents=True, exist_ok=True)
-            data = self.to_dict()
-            # Apply the same schema and complexity checks as load_report before writing.
-            # A successful write is therefore guaranteed to be readable by this version.
-            report_from_dict(data)
-            payload = json.dumps(data, indent=2, sort_keys=True, allow_nan=False) + "\n"
-            if len(payload.encode("utf-8")) > MAX_REPORT_BYTES:
-                raise OutputError(f"report exceeds {MAX_REPORT_BYTES} byte serialized output limit")
-            target.write_text(payload, encoding="utf-8")
+            atomic_write_bytes(
+                target,
+                self.json_bytes(),
+                context="report",
+                force=force,
+                protected=protected,
+            )
         except OSError as error:
             raise OutputError(f"cannot write report {target}: {error}") from error
         except InputError as error:

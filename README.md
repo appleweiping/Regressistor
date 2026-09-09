@@ -29,6 +29,24 @@ python -m pip install -e ".[dev]"
 
 The runtime has no third-party dependencies.
 
+## Liberty NLDM import
+
+Strictly convert characterized Liberty timing and internal-power data into the ordinary
+measurement-bundle v1 format:
+
+```bash
+regressistor import-liberty \
+  --input characterized.lib \
+  --out characterized.json
+```
+
+The dependency-free importer binds the exact input SHA-256 and source coordinates, preserves PVT,
+units, related ports and arc qualifiers, expands scalar/one-axis/two-axis NLDM tables, and rejects
+ambiguous or dimensionally inconsistent input under explicit resource limits. It covers delay and
+transition tables, internal power, setup/hold constraints, minimum pulse width, and minimum period.
+The output is atomic and no-clobber by default; even `--force` cannot overwrite the Liberty input.
+See [the Liberty NLDM contract](docs/liberty-nldm.md) for the precise mapping and limits.
+
 ## SimCairn interoperability benchmark
 
 Regressistor directly validates SimCairn's producer-bound
@@ -240,8 +258,9 @@ regressistor freeze \
   --out baseline.json
 ```
 
-The command refuses to overwrite an existing file unless `--force` is passed.
-It records the input SHA-256 in baseline metadata.
+The command refuses to overwrite an existing file unless `--force` is passed and records the
+input SHA-256 in baseline metadata. A destination that aliases the candidate or policy is always
+rejected.
 
 ## Outputs and exit codes
 
@@ -250,6 +269,10 @@ It records the input SHA-256 in baseline metadata.
 - `report.json`: complete machine-readable evidence and input hashes.
 - `summary.md`: deterministic reviewer summary.
 - `junit.xml`: one test case per metric/corner decision.
+
+All writers use same-directory temporary files and atomic installation. Existing outputs are
+refused; pass `--force` to `check`, `freeze`, or `import-liberty` only for an intentional
+replacement. Inputs are protected from exact-path, case-folded, and physical-file aliases.
 
 Exit codes are 0 for a passing gate, 1 for a blocking decision, 2 for invalid
 input, and 3 for output or I/O failure. Warning-severity contract failures are
@@ -290,6 +313,12 @@ ruff check .
 ruff format --check .
 pytest --cov=regressistor --cov-report=term-missing
 python -m build
+```
+
+The importer has an informational, non-gating benchmark:
+
+```bash
+python benchmarks/liberty_nldm_benchmark.py --repetitions 10
 ```
 
 The project is available under the MIT License.

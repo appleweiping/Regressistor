@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import json
+import os
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
 import pytest
 
-from regressistor.errors import InputError
+import regressistor._output as output_module
+from regressistor.errors import InputError, OutputError
 from regressistor.render import (
     console_summary,
     decision_text,
@@ -72,6 +74,252 @@ def test_write_artifacts_creates_all_formats(tmp_path: Path) -> None:
     paths = write_artifacts(report, tmp_path / "artifacts")
     assert [path.name for path in paths] == ["report.json", "summary.md", "junit.xml"]
     assert all(path.is_file() for path in paths)
+
+
+def test_report_artifacts_are_no_clobber_and_preflighted_as_a_set(tmp_path: Path) -> None:
+    report = run_compare(65.0, 64.5)
+    directory = tmp_path / "artifacts"
+    directory.mkdir()
+    sentinel = directory / "summary.md"
+    sentinel.write_text("keep", encoding="utf-8")
+    with pytest.raises(OutputError, match="refusing to overwrite"):
+        write_artifacts(report, directory)
+    assert sentinel.read_text(encoding="utf-8") == "keep"
+    assert not (directory / "report.json").exists()
+    paths = write_artifacts(report, directory, force=True)
+    assert all(path.is_file() for path in paths)
+    assert not list(directory.glob(".*.tmp"))
+
+
+def test_report_artifact_transaction_rolls_back_new_files_on_install_failure(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    directory = tmp_path / "artifacts"
+    original = output_module._install_staged
+    calls = 0
+
+    def fail_second(staged: Path, target: Path, *, force: bool) -> None:
+        nonlocal calls
+        calls += 1
+        if calls == 2:
+            raise OutputError("injected second-artifact failure")
+        original(staged, target, force=force)
+
+    monkeypatch.setattr(output_module, "_install_staged", fail_second)
+    with pytest.raises(OutputError, match="injected second-artifact failure"):
+        write_artifacts(run_compare(65.0, 64.5), directory)
+
+    names = ("report.json", "summary.md", "junit.xml")
+    assert not any((directory / name).exists() for name in names)
+    assert not list(directory.glob(".*.tmp"))
+    assert not list(directory.glob(".*.rollback"))
+
+
+def test_forced_report_artifact_transaction_restores_every_original(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    directory = tmp_path / "artifacts"
+    paths = write_artifacts(run_compare(65.0, 65.0), directory)
+    originals = {path.name: path.read_bytes() for path in paths}
+    original = output_module._install_staged
+    calls = 0
+
+    def fail_second(staged: Path, target: Path, *, force: bool) -> None:
+        nonlocal calls
+        calls += 1
+        if calls == 2:
+            raise OSError("injected forced-install failure")
+        original(staged, target, force=force)
+
+    monkeypatch.setattr(output_module, "_install_staged", fail_second)
+    with pytest.raises(OutputError, match="cannot publish report artifact transaction"):
+        write_artifacts(run_compare(65.0, 58.0), directory, force=True)
+
+    assert {path.name: path.read_bytes() for path in paths} == originals
+    assert not list(directory.glob(".*.tmp"))
+    assert not list(directory.glob(".*.rollback"))
+
+
+def test_transaction_preserves_a_concurrent_in_place_writer(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    directory = tmp_path / "artifacts"
+    first = directory / "report.json"
+    original = output_module._install_staged
+    calls = 0
+
+    def race_then_fail(staged: Path, target: Path, *, force: bool) -> None:
+        nonlocal calls
+        calls += 1
+        if calls == 2:
+            first.write_bytes(b"concurrent-writer")
+            raise OutputError("injected second-artifact failure")
+        original(staged, target, force=force)
+
+    monkeypatch.setattr(output_module, "_install_staged", race_then_fail)
+    with pytest.raises(OutputError, match="concurrent content restored"):
+        write_artifacts(run_compare(65.0, 64.5), directory)
+
+    assert first.read_bytes() == b"concurrent-writer"
+    assert not (directory / "summary.md").exists()
+    assert not (directory / "junit.xml").exists()
+    assert not list(directory.glob(".*.tmp"))
+    assert not list(directory.glob(".*.rollback"))
+
+
+def test_forced_transaction_preserves_concurrent_content_and_original_backup(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    directory = tmp_path / "artifacts"
+    paths = write_artifacts(run_compare(65.0, 65.0), directory)
+    original_report = paths[0].read_bytes()
+    original = output_module._install_staged
+    calls = 0
+
+    def race_then_fail(staged: Path, target: Path, *, force: bool) -> None:
+        nonlocal calls
+        calls += 1
+        if calls == 2:
+            paths[0].write_bytes(b"concurrent-writer")
+            raise OutputError("injected forced-install failure")
+        original(staged, target, force=force)
+
+    monkeypatch.setattr(output_module, "_install_staged", race_then_fail)
+    with pytest.raises(OutputError, match="rollback needs recovery"):
+        write_artifacts(run_compare(65.0, 58.0), directory, force=True)
+
+    assert paths[0].read_bytes() == b"concurrent-writer"
+    retained = list(directory.glob(".report.json.*.rollback"))
+    assert len(retained) == 1
+    assert retained[0].read_bytes() == original_report
+    assert paths[1].is_file() and paths[2].is_file()
+    assert not list(directory.glob(".*.tmp"))
+
+
+def test_partial_forced_transaction_rolls_back_before_reraising_base_exception(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    directory = tmp_path / "artifacts"
+    paths = write_artifacts(run_compare(65.0, 65.0), directory)
+    originals = {path.name: path.read_bytes() for path in paths}
+    original = output_module._install_staged
+    calls = 0
+
+    def interrupt_second(staged: Path, target: Path, *, force: bool) -> None:
+        nonlocal calls
+        calls += 1
+        if calls == 2:
+            raise KeyboardInterrupt
+        original(staged, target, force=force)
+
+    monkeypatch.setattr(output_module, "_install_staged", interrupt_second)
+    with pytest.raises(KeyboardInterrupt):
+        write_artifacts(run_compare(65.0, 58.0), directory, force=True)
+
+    assert {path.name: path.read_bytes() for path in paths} == originals
+    assert not list(directory.glob(".*.tmp"))
+    assert not list(directory.glob(".*.rollback"))
+
+
+@pytest.mark.parametrize("force", [False, True])
+def test_post_install_interrupt_is_registered_and_rolled_back(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, force: bool
+) -> None:
+    directory = tmp_path / "artifacts"
+    paths = (
+        write_artifacts(run_compare(65.0, 65.0), directory)
+        if force
+        else tuple(directory / name for name in ("report.json", "summary.md", "junit.xml"))
+    )
+    originals = {path.name: path.read_bytes() for path in paths} if force else {}
+    original = output_module._install_staged
+    calls = 0
+
+    def install_then_interrupt(staged: Path, target: Path, *, force: bool) -> None:
+        nonlocal calls
+        calls += 1
+        original(staged, target, force=force)
+        if calls == 1:
+            raise KeyboardInterrupt
+
+    monkeypatch.setattr(output_module, "_install_staged", install_then_interrupt)
+    with pytest.raises(KeyboardInterrupt):
+        write_artifacts(run_compare(65.0, 58.0), directory, force=force)
+
+    if force:
+        assert {path.name: path.read_bytes() for path in paths} == originals
+    else:
+        assert not any(path.exists() for path in paths)
+    assert not list(directory.glob(".*.tmp"))
+    assert not list(directory.glob(".*.rollback"))
+
+
+def test_post_backup_interrupt_is_registered_and_restored(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    directory = tmp_path / "artifacts"
+    paths = write_artifacts(run_compare(65.0, 65.0), directory)
+    originals = {path.name: path.read_bytes() for path in paths}
+    original_replace = output_module.os.replace
+    calls = 0
+
+    def replace_then_interrupt(source: Path, target: Path) -> None:
+        nonlocal calls
+        calls += 1
+        original_replace(source, target)
+        if calls == 1:
+            raise KeyboardInterrupt
+
+    monkeypatch.setattr(output_module.os, "replace", replace_then_interrupt)
+    with pytest.raises(KeyboardInterrupt):
+        write_artifacts(run_compare(65.0, 58.0), directory, force=True)
+
+    assert {path.name: path.read_bytes() for path in paths} == originals
+    assert not list(directory.glob(".*.tmp"))
+    assert not list(directory.glob(".*.rollback"))
+
+
+def test_secondary_recovery_failure_never_deletes_displaced_originals(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    directory = tmp_path / "artifacts"
+    paths = write_artifacts(run_compare(65.0, 65.0), directory)
+    originals = {path.name: path.read_bytes() for path in paths}
+    original_install = output_module._install_staged
+    calls = 0
+
+    def race_then_fail(staged: Path, target: Path, *, force: bool) -> None:
+        nonlocal calls
+        calls += 1
+        if calls == 2:
+            paths[0].write_bytes(b"concurrent-writer")
+            raise OutputError("injected install failure")
+        original_install(staged, target, force=force)
+
+    def link_then_fail(recovery: Path, target: Path) -> tuple[bool, bool]:
+        os.link(recovery, target, follow_symlinks=False)
+        raise OSError("injected recovery cleanup failure")
+
+    monkeypatch.setattr(output_module, "_install_staged", race_then_fail)
+    monkeypatch.setattr(output_module, "_restore_no_clobber", link_then_fail)
+    with pytest.raises(OutputError, match="rollback needs recovery"):
+        write_artifacts(run_compare(65.0, 58.0), directory, force=True)
+
+    assert paths[0].read_bytes() == b"concurrent-writer"
+    assert paths[1].read_bytes() == originals[paths[1].name]
+    assert paths[2].read_bytes() == originals[paths[2].name]
+    recovery_payloads = [path.read_bytes() for path in directory.glob(".*.rollback")]
+    assert originals[paths[0].name] in recovery_payloads
+    assert not list(directory.glob(".*.tmp"))
+
+
+def test_report_writer_never_overwrites_a_protected_input(tmp_path: Path) -> None:
+    report = run_compare(65.0, 64.5)
+    source = tmp_path / "input.json"
+    source.write_text("keep", encoding="utf-8")
+    with pytest.raises(OutputError, match="aliases an input"):
+        report.write_json(source, force=True, protected=(source,))
+    assert source.read_text(encoding="utf-8") == "keep"
 
 
 def test_html_helper_escapes_untrusted_labels() -> None:

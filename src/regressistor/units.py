@@ -26,6 +26,7 @@ _BASE_UNITS: dict[str, tuple[str | None, float]] = {
     "F": ("capacitance", 1.0),
     "H": ("inductance", 1.0),
     "W": ("power", 1.0),
+    "J": ("energy", 1.0),
     "Ohm": ("resistance", 1.0),
     "ohm": ("resistance", 1.0),
     "deg": ("angle", 1.0),

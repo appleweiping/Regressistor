@@ -6,10 +6,11 @@ import hashlib
 import json
 import math
 import re
-from collections.abc import Mapping
+from collections.abc import Iterable, Mapping
 from pathlib import Path
 from typing import Any
 
+from regressistor._output import atomic_write_bytes
 from regressistor._strict_data import MAX_DOCUMENT_BYTES, check_data_complexity, load_json_path
 from regressistor.errors import InputError, OutputError
 from regressistor.model import Bundle, CaseKey, Measurement, Point, Scalar, case_identity
@@ -281,7 +282,13 @@ def canonical_data(bundle: Bundle, *, frozen_from: str | None = None) -> dict[st
     return {"schema_version": schema_version, "run": run, "points": points}
 
 
-def freeze_bundle(bundle: Bundle, destination: str | Path, *, force: bool = False) -> Path:
+def freeze_bundle(
+    bundle: Bundle,
+    destination: str | Path,
+    *,
+    force: bool = False,
+    protected: Iterable[str | Path] = (),
+) -> Path:
     """Write a canonical baseline without modifying the source bundle."""
     target = Path(destination)
     try:
@@ -299,15 +306,13 @@ def freeze_bundle(bundle: Bundle, destination: str | Path, *, force: bool = Fals
         ).encode("utf-8")
         if len(payload) > MAX_DOCUMENT_BYTES:
             raise OutputError(f"baseline exceeds {MAX_DOCUMENT_BYTES} byte serialized output limit")
-        target.parent.mkdir(parents=True, exist_ok=True)
-        if force:
-            target.write_bytes(payload)
-        else:
-            try:
-                with target.open("xb") as stream:
-                    stream.write(payload)
-            except FileExistsError as error:
-                raise OutputError(f"refusing to overwrite existing baseline: {target}") from error
+        atomic_write_bytes(
+            target,
+            payload,
+            context="baseline",
+            force=force,
+            protected=protected,
+        )
     except OSError as error:
         raise OutputError(f"cannot write baseline {target}: {error}") from error
     except (TypeError, ValueError) as error:

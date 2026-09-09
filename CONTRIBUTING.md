@@ -10,6 +10,11 @@ results and simulator independence.
 4. Run `python -m build` and the example command from the README.
 5. Explain compatibility effects and disclose substantial automated assistance.
 
+Every commit in a pull request must contain an author-matching
+`Signed-off-by: Name <email>` trailer (DCO 1.1). Release tags must be annotated
+and signed by a key listed in `.github/allowed_signers`; the release workflow
+cryptographically verifies the tag before building artifacts.
+
 Tests must use synthetic data that contributors are allowed to publish. Do not
 add PDK files, confidential measurements, generated simulator output, or code
 copied from another project. Schema changes require an architecture note and a

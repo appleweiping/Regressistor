@@ -19,6 +19,7 @@ from regressistor.units import convert, parse_unit, validate_unit
         (3.0, "mA/V", "A/V", 0.003),
         (4.0, "", "1", 4.0),
         (7.0, "kohm", "Ohm", 7000.0),
+        (3.0, "pJ", "fJ", 3000.0),
     ],
 )
 def test_converts_supported_units(value: float, source: str, target: str, expected: float) -> None:
@@ -46,6 +47,8 @@ def test_rejects_non_string_unit() -> None:
 def test_rejects_incompatible_dimensions() -> None:
     with pytest.raises(UnitError, match="incompatible"):
         convert(1.0, "V", "A")
+    with pytest.raises(UnitError, match="incompatible"):
+        convert(1.0, "J", "W")
 
 
 def test_rejects_non_finite_conversion() -> None:

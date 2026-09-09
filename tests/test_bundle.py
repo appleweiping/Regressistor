@@ -116,17 +116,39 @@ def test_freeze_exclusive_create_closes_the_overwrite_race(
 ) -> None:
     bundle = parse_bundle(bundle_dict(), source_hash="a" * 64)
     target = tmp_path / "raced.json"
-    original_open = Path.open
+    import regressistor._output as output_module
 
-    def raced_open(path: Path, mode: str = "r", *args: object, **kwargs: object) -> object:
-        if path == target and mode == "xb" and not target.exists():
+    original_link = output_module.os.link
+
+    def raced_link(source: str | Path, destination: str | Path) -> None:
+        if Path(destination) == target and not target.exists():
             target.write_bytes(b"created-by-racer")
-        return original_open(path, mode, *args, **kwargs)
+        original_link(source, destination)
 
-    monkeypatch.setattr(Path, "open", raced_open)
+    monkeypatch.setattr(output_module.os, "link", raced_link)
     with pytest.raises(OutputError, match="refusing"):
         freeze_bundle(bundle, target)
     assert target.read_bytes() == b"created-by-racer"
+    assert not list(tmp_path.glob(".*.tmp"))
+
+
+def test_freeze_force_failure_keeps_the_old_file_and_cleans_staging(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import regressistor._output as output_module
+
+    bundle = parse_bundle(bundle_dict(), source_hash="a" * 64)
+    target = tmp_path / "baseline.json"
+    target.write_bytes(b"reviewed-baseline")
+
+    def fail_replace(source: str | Path, destination: str | Path) -> None:
+        raise OSError("injected replace failure")
+
+    monkeypatch.setattr(output_module.os, "replace", fail_replace)
+    with pytest.raises(OutputError, match="injected replace failure"):
+        freeze_bundle(bundle, target, force=True)
+    assert target.read_bytes() == b"reviewed-baseline"
+    assert not list(tmp_path.glob(".*.tmp"))
 
 
 def test_freeze_simcairn_bundle_round_trips_strict_provenance(tmp_path: Path) -> None:

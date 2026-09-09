@@ -1,0 +1,120 @@
+/* Synthetic data authored for Regressistor's parser tests. */
+library (synthetic_nldm) {
+  // Explicit scale factors exercise value and axis conversion.
+  time_unit : "100ps";
+  voltage_unit : "1v";
+  current_unit : "1ma";
+  leakage_power_unit : "10uw";
+  capacitive_load_unit (2, pf);
+
+  default_operating_conditions : typical;
+  operating_conditions (typical) {
+    process : 1.0;
+    voltage : 1.1;
+    temperature : 25;
+  }
+
+  lu_table_template (delay_template) {
+    variable_1 : input_net_transition;
+    variable_2 : total_output_net_capacitance;
+    index_1 ("0.01, 0.10");
+    index_2 ("0.5, 2.0");
+  }
+
+  lu_table_template (constraint_template) {
+    variable_1 : related_pin_transition;
+    variable_2 : constrained_pin_transition;
+    index_1 ("0.02, 0.20");
+    index_2 ("0.03, 0.30");
+  }
+
+  power_lut_template (power_template) {
+    variable_1 : input_transition_time;
+    index_1 ("0.01, 0.10");
+  }
+
+  cell (INVX1) {
+    pin (A) {
+      direction : input;
+    }
+    pin (Y) {
+      direction : output;
+      timing () {
+        related_pin : "A";
+        timing_sense : negative_unate;
+        timing_type : combinational;
+        cell_rise (delay_template) {
+          index_1 ("0.02, 0.20");
+          values ( \
+            "0.50, 0.60", \
+            "0.80, 0.90" \
+          );
+        }
+        cell_fall (delay_template) {
+          values ("0.40, 0.50", "0.70, 0.80");
+        }
+        rise_transition (delay_template) {
+          values ("0.20, 0.30", "0.40, 0.50");
+        }
+        fall_transition (scalar) {
+          values ("0.25");
+        }
+      }
+      internal_power () {
+        related_pin : "A";
+        when : "A";
+        power_level : VDD;
+        mode (functional, enabled);
+        rise_power (power_template) {
+          values ("0.10, 0.20");
+        }
+        fall_power (scalar) {
+          values ("0.15");
+        }
+      }
+    }
+    pin (CLK) {
+      min_pulse_width_high : 0.75;
+      min_pulse_width_low : 0.65;
+      minimum_period : 2.5;
+      min_pulse_width () {
+        when : "TEST";
+        constraint_high : 0.80;
+        constraint_low : 0.70;
+      }
+      minimum_period () {
+        when : "TEST";
+        constraint : 2.75;
+      }
+      timing () {
+        related_pin : "D";
+        timing_type : setup_rising;
+        rise_constraint (constraint_template) {
+          values ("0.30, 0.40", "0.50, 0.60");
+        }
+        fall_constraint (scalar) {
+          values ("0.35");
+        }
+      }
+      timing () {
+        related_pin : "D";
+        timing_type : hold_rising;
+        rise_constraint (constraint_template) {
+          values ("0.10, 0.20", "0.30, 0.40");
+        }
+      }
+      timing () {
+        timing_type : min_pulse_width;
+        rise_constraint (scalar) {
+          values ("0.70");
+        }
+      }
+      timing () {
+        timing_type : minimum_period;
+        rise_constraint (scalar) {
+          values ("2.25");
+        }
+      }
+    }
+  }
+}

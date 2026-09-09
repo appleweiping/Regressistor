@@ -14,6 +14,7 @@ from regressistor.bundle import freeze_bundle, load_bundle
 from regressistor.errors import InputError, OutputError, RegressistorError
 from regressistor.gate import compare
 from regressistor.inspection import inspect_bundle, inspection_text
+from regressistor.liberty import load_liberty_nldm, write_liberty_bundle
 from regressistor.matching import index_bundle
 from regressistor.model import Scalar, scalar_identity
 from regressistor.policy import load_policy
@@ -49,7 +50,12 @@ def _check(args: argparse.Namespace) -> int:
         load_bundle(args.baseline),
         load_bundle(args.candidate),
     )
-    paths = write_artifacts(report, args.out)
+    paths = write_artifacts(
+        report,
+        args.out,
+        force=args.force,
+        protected=(args.policy, args.baseline, args.candidate),
+    )
     _emit(console_summary(report))
     _emit("Artifacts: " + ", ".join(str(path) for path in paths))
     return 0 if report.passed else 1
@@ -59,7 +65,8 @@ def _freeze(args: argparse.Namespace) -> int:
     bundle = load_bundle(args.candidate)
     if args.policy:
         index_bundle(bundle, load_policy(args.policy))
-    target = freeze_bundle(bundle, args.out, force=args.force)
+    protected = (args.candidate,) + ((args.policy,) if args.policy else ())
+    target = freeze_bundle(bundle, args.out, force=args.force, protected=protected)
     _emit(f"Frozen canonical baseline: {target}")
     return 0
 
@@ -70,6 +77,21 @@ def _inspect(args: argparse.Namespace) -> int:
         _emit(json.dumps(inspection.as_dict(), indent=2, sort_keys=True))
     else:
         _emit(inspection_text(inspection))
+    return 0
+
+
+def _import_liberty(args: argparse.Namespace) -> int:
+    conversion = load_liberty_nldm(args.input)
+    target = write_liberty_bundle(
+        conversion,
+        args.out,
+        force=args.force,
+        protected=(args.input,),
+    )
+    _emit(
+        f"Converted {len(conversion.bundle.points)} Liberty NLDM point(s) to {target} "
+        f"(source SHA-256 {conversion.source_sha256})"
+    )
     return 0
 
 
@@ -130,6 +152,7 @@ def build_parser() -> argparse.ArgumentParser:
     check.add_argument("--baseline", required=True, type=Path)
     check.add_argument("--candidate", required=True, type=Path)
     check.add_argument("--out", required=True, type=Path)
+    check.add_argument("--force", action="store_true")
     check.set_defaults(handler=_check)
 
     freeze = subparsers.add_parser("freeze", help="write a canonical baseline bundle")
@@ -144,6 +167,14 @@ def build_parser() -> argparse.ArgumentParser:
     inspect.add_argument("--bundle", required=True, type=Path)
     inspect.add_argument("--format", choices=("text", "json"), default="text")
     inspect.set_defaults(handler=_inspect)
+
+    liberty = subparsers.add_parser(
+        "import-liberty", help="convert strict Liberty NLDM data to a measurement bundle"
+    )
+    liberty.add_argument("--input", required=True, type=Path)
+    liberty.add_argument("--out", required=True, type=Path)
+    liberty.add_argument("--force", action="store_true")
+    liberty.set_defaults(handler=_import_liberty)
 
     explain = subparsers.add_parser("explain", help="explain matching report decisions")
     explain.add_argument("--report", required=True, type=Path)

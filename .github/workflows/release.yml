@@ -13,10 +13,14 @@ concurrency:
 permissions:
   contents: read
 
+env:
+  RELEASE_PROJECT_NAME: regressistor
+  RELEASE_PROJECT_VERSION: "0.4.0"
+  RELEASE_SYFT_VERSION: "1.51.1"
+
 jobs:
   verify-ci:
     name: Require main ancestry and successful CI
-    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     timeout-minutes: 35
     permissions:
@@ -27,20 +31,48 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
+          fetch-tags: true
           persist-credentials: false
       - name: Verify tag commit is reachable from main
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
+          set -euo pipefail
+          case "$GITHUB_REF" in
+            refs/tags/v*) ;;
+            *) echo "release workflow must run from a version tag, not $GITHUB_REF" >&2; exit 1 ;;
+          esac
           git fetch --no-tags origin main
+          test "$(git cat-file -t "refs/tags/$GITHUB_REF_NAME")" = tag
+          git show origin/main:.github/allowed_signers > "$RUNNER_TEMP/allowed_signers"
+          git config gpg.format ssh
+          git config gpg.ssh.allowedSignersFile "$RUNNER_TEMP/allowed_signers"
+          git verify-tag "$GITHUB_REF_NAME"
+          resolved="$(git rev-parse "refs/tags/$GITHUB_REF_NAME^{}")"
+          if [ "$resolved" != "$GITHUB_SHA" ]; then
+            echo "tag target differs from the workflow commit" >&2
+            exit 1
+          fi
           git merge-base --is-ancestor "$GITHUB_SHA" origin/main || {
             echo "release commit is not reachable from origin/main" >&2
+            exit 1
+          }
+          test "$(gh api "repos/$GITHUB_REPOSITORY/commits/$GITHUB_SHA" \
+            --jq .commit.verification.verified)" = true || {
+            echo "release commit does not have a GitHub-verified signature" >&2
             exit 1
           }
       - name: Wait for the complete CI workflow on this commit
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          set -euo pipefail
           for attempt in $(seq 1 90); do
-            successful="$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/ci.yml/runs?head_sha=$GITHUB_SHA&per_page=100" --jq '[.workflow_runs[] | select(.conclusion == "success")] | length')"
+            successful="$(gh api \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "repos/$GITHUB_REPOSITORY/actions/workflows/ci.yml/runs?head_sha=$GITHUB_SHA&per_page=100" \
+              --jq "[.workflow_runs[] | select(.conclusion == \"success\" and .event == \"push\" and .head_branch == \"main\" and .head_sha == \"$GITHUB_SHA\")] | length")"
             if [ "$successful" -gt 0 ]; then
               echo "verified successful CI workflow for $GITHUB_SHA"
               exit 0
@@ -54,27 +86,30 @@ jobs:
   build:
     name: Build and verify distributions
     needs: verify-ci
-    if: >-
-      ${{ always() && (github.event_name == 'workflow_dispatch' ||
-      needs.verify-ci.result == 'success') }}
+    if: needs.verify-ci.result == 'success'
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 45
     permissions:
       contents: read
     steps:
       - name: Check out source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ github.sha }}
           persist-credentials: false
-      - name: Set up Python
+      - name: Set up exact Python
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
-          python-version: "3.11"
-          cache: pip
-      - name: Install pinned uv and frozen development environment
-        run: |
-          python -m pip install --disable-pip-version-check uv==0.11.21
-          uv sync --frozen --extra dev
+          python-version: "3.11.16"
+      - name: Set up checksum-verified uv
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: "0.11.21"
+          checksum: 8c88519b0ef0af9801fcdee419bbb12116bd9e6b18e162ae093c932d8b264050
+          enable-cache: false
+          download-from-astral-mirror: false
+      - name: Install frozen development environment
+        run: uv sync --frozen --extra dev
       - name: Run release quality gate
         run: |
           uv run --frozen ruff check .
@@ -84,7 +119,6 @@ jobs:
           uv run --frozen pytest --cov=regressistor --cov-branch --cov-report=term-missing
       - name: Verify tag matches package version
         env:
-          RELEASE_EVENT: ${{ github.event_name }}
           RELEASE_TAG: ${{ github.ref_name }}
         run: |
           python - <<'PY'
@@ -93,12 +127,16 @@ jobs:
           from pathlib import Path
 
           version = tomllib.loads(Path("pyproject.toml").read_text(encoding="utf-8"))["project"]["version"]
-          if os.environ["RELEASE_EVENT"] == "push":
-              expected = f"v{version}"
-              if os.environ["RELEASE_TAG"] != expected:
-                  raise SystemExit(
-                      f"release tag {os.environ['RELEASE_TAG']!r} does not match {expected!r}"
-                  )
+          expected_version = os.environ["RELEASE_PROJECT_VERSION"]
+          if version != expected_version:
+              raise SystemExit(
+                  f"project version {version!r} does not match workflow version {expected_version!r}"
+              )
+          expected = f"v{version}"
+          if os.environ["RELEASE_TAG"] != expected:
+              raise SystemExit(
+                  f"release tag {os.environ['RELEASE_TAG']!r} does not match {expected!r}"
+              )
           print(f"validated project version {version}")
           PY
       - name: Fix build timestamp to the source commit
@@ -115,13 +153,19 @@ jobs:
           import zipfile
           from pathlib import Path
 
+          from regressistor.distribution_audit import audit_sdist, audit_wheel
+
           wheels = tuple(Path("dist").glob("*.whl"))
           sdists = tuple(Path("dist").glob("*.tar.gz"))
           if len(wheels) != 1 or len(sdists) != 1 or len(tuple(Path("dist").iterdir())) != 2:
               raise SystemExit("expected exactly one wheel and one .tar.gz source distribution")
           with tarfile.open(sdists[0], "r:gz") as archive:
-              names = {"/".join(name.split("/")[1:]) for name in archive.getnames()}
+              names = audit_sdist(archive)
           required_source = {
+              ".github/allowed_signers",
+              ".github/workflows/ci.yml",
+              ".github/workflows/dco.yml",
+              ".github/workflows/release.yml",
               "CITATION.cff",
               "benchmarks/manifest.json",
               "benchmarks/fixtures/simcairn-offline-golden.json",
@@ -133,22 +177,61 @@ jobs:
               "benchmarks/evidence/simcairn-gf180-manifest.json",
               "docs/schemas/measurement-bundle-1.schema.json",
               "docs/schemas/measurement-bundle-2.schema.json",
+              "docs/liberty-nldm.md",
               "docs/validation.md",
+              "benchmarks/liberty_nldm_benchmark.py",
+              "tests/fixtures/synthetic_nldm.lib",
+              "tools/verify_openram_liberty.py",
+              "src/regressistor/dco.py",
+              "src/regressistor/distribution_audit.py",
+              "src/regressistor/liberty.py",
+              "src/regressistor/release_artifacts.py",
+              "tests/test_release_artifacts.py",
+              "tests/test_release_workflow.py",
+              "tests/test_standalone_workflows.py",
+              "tests/test_workflow_security.py",
+              "uv.lock",
           }
           if missing := required_source - names:
               raise SystemExit(f"source distribution is missing: {sorted(missing)}")
           with zipfile.ZipFile(wheels[0]) as archive:
-              wheel_names = set(archive.namelist())
-          required_wheel = {"regressistor/_version.py", "regressistor/py.typed"}
+              wheel_names = audit_wheel(archive)
+          required_wheel = {
+              "regressistor/_version.py",
+              "regressistor/distribution_audit.py",
+              "regressistor/liberty.py",
+              "regressistor/release_artifacts.py",
+              "regressistor/py.typed",
+          }
           if missing := required_wheel - wheel_names:
               raise SystemExit(f"wheel is missing: {sorted(missing)}")
           PY
+      - name: Run the full suite from the exact source distribution
+        run: |
+          set -euo pipefail
+          source_root="$(mktemp -d "$RUNNER_TEMP/regressistor-sdist.XXXXXX")"
+          python -I - "$source_root" "dist/regressistor-$RELEASE_PROJECT_VERSION.tar.gz" <<'PY'
+          import sys
+          import tarfile
+          from pathlib import Path
+
+          destination = Path(sys.argv[1]).resolve(strict=True)
+          archive_path = Path(sys.argv[2]).resolve(strict=True)
+          with tarfile.open(archive_path, "r:gz") as archive:
+              archive.extractall(destination, filter="data")
+          PY
+          cd "$source_root/regressistor-$RELEASE_PROJECT_VERSION"
+          uv sync --frozen --extra dev
+          uv run --frozen pytest
       - name: Install wheel and smoke-check metadata and CLI version
         run: |
           python -m venv .release-smoke
           .release-smoke/bin/python -m pip install --disable-pip-version-check --no-deps dist/*.whl
           .release-smoke/bin/python -I - <<'PY'
+          import json
           import subprocess
+          import tempfile
+          from pathlib import Path
           from importlib.metadata import version
 
           import regressistor
@@ -164,12 +247,87 @@ jobs:
           )
           if completed.stdout.strip() != f"regressistor {expected}":
               raise SystemExit("CLI version does not match distribution metadata")
+          with tempfile.TemporaryDirectory() as directory:
+              output = Path(directory) / "liberty.json"
+              subprocess.run(
+                  [
+                      ".release-smoke/bin/regressistor",
+                      "import-liberty",
+                      "--input",
+                      "tests/fixtures/synthetic_nldm.lib",
+                      "--out",
+                      str(output),
+                  ],
+                  check=True,
+                  capture_output=True,
+                  text=True,
+              )
+              converted = json.loads(output.read_text(encoding="utf-8"))
+              if converted["run"]["contract"] != "regressistor.liberty-nldm/1":
+                  raise SystemExit("installed Liberty conversion contract is invalid")
+              if len(converted["points"]) != 33:
+                  raise SystemExit("installed Liberty conversion point count is invalid")
           PY
-      - name: Upload verified distributions
+          site_packages="$(.release-smoke/bin/python -I -c 'import sysconfig; print(sysconfig.get_path("purelib"))')"
+          installation_root="$(realpath .release-smoke)"
+          workspace_root="$(realpath "$GITHUB_WORKSPACE")"
+          if [ "$installation_root" != "$workspace_root/.release-smoke" ]; then
+            echo "release virtual environment resolved outside its expected root" >&2
+            exit 1
+          fi
+          case "$site_packages" in
+            "$installation_root"/*) ;;
+            *) echo "installed site-packages escaped the release virtual environment" >&2; exit 1 ;;
+          esac
+          echo "RELEASE_INSTALLATION_ROOT=$installation_root" >> "$GITHUB_ENV"
+          echo "RELEASE_SITE_PACKAGES=$site_packages" >> "$GITHUB_ENV"
+      - name: Generate SPDX software bill of materials
+        uses: anchore/sbom-action@3ad7283483fc7af8ff2b4ea19663c2d5ca935e26 # v0.24.2
+        env:
+          SYFT_CHECK_FOR_APP_UPDATE: "false"
+          SYFT_FILE_METADATA_SELECTION: all
+          SYFT_SOURCE_NAME: ${{ env.RELEASE_PROJECT_NAME }}
+          SYFT_SOURCE_VERSION: ${{ env.RELEASE_PROJECT_VERSION }}
+        with:
+          path: .release-smoke
+          format: spdx-json
+          output-file: dist/SBOM.spdx.json
+          syft-version: v${{ env.RELEASE_SYFT_VERSION }}
+          upload-artifact: false
+          upload-release-assets: false
+      - name: Bind and validate the installed-wheel SBOM and release checksums
+        run: |
+          uv run --frozen python -I src/regressistor/release_artifacts.py bind-installed-wheel \
+            --sbom dist/SBOM.spdx.json \
+            --site-packages "$RELEASE_SITE_PACKAGES" \
+            --installation-root "$RELEASE_INSTALLATION_ROOT" \
+            --expected-external-path "bin/regressistor" \
+            --wheel "dist/regressistor-$RELEASE_PROJECT_VERSION-py3-none-any.whl" \
+            --name "$RELEASE_PROJECT_NAME" \
+            --version "$RELEASE_PROJECT_VERSION"
+          uv run --frozen python -I src/regressistor/release_artifacts.py validate-sbom \
+            --sbom dist/SBOM.spdx.json \
+            --name "$RELEASE_PROJECT_NAME" \
+            --version "$RELEASE_PROJECT_VERSION" \
+            --syft-version "$RELEASE_SYFT_VERSION"
+          uv run --frozen python -I src/regressistor/release_artifacts.py write-checksums \
+            --directory dist \
+            --name "$RELEASE_PROJECT_NAME" \
+            --version "$RELEASE_PROJECT_VERSION"
+          uv run --frozen python -I src/regressistor/release_artifacts.py verify-release \
+            --directory dist \
+            --name "$RELEASE_PROJECT_NAME" \
+            --version "$RELEASE_PROJECT_VERSION" \
+            --syft-version "$RELEASE_SYFT_VERSION"
+      - name: Upload verified distributions and release evidence
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: release-distributions
-          path: dist/*
+          path: |
+            dist/regressistor-${{ env.RELEASE_PROJECT_VERSION }}-py3-none-any.whl
+            dist/regressistor-${{ env.RELEASE_PROJECT_VERSION }}.tar.gz
+            dist/SBOM.spdx.json
+            dist/SHA256SUMS
           if-no-files-found: error
           retention-days: 7
 
@@ -184,15 +342,27 @@ jobs:
       id-token: write
       attestations: write
     steps:
+      - name: Check out the verified release source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
       - name: Download verified distributions
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: release-distributions
           path: dist
+      - name: Re-verify downloaded release assets
+        run: >-
+          python -I src/regressistor/release_artifacts.py verify-release
+          --directory dist
+          --name "$RELEASE_PROJECT_NAME"
+          --version "$RELEASE_PROJECT_VERSION"
+          --syft-version "$RELEASE_SYFT_VERSION"
       - name: Attest verified distributions
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
         with:
-          subject-path: dist/*
+          subject-checksums: dist/SHA256SUMS
 
   github-release:
     name: Create GitHub release
@@ -205,11 +375,23 @@ jobs:
     permissions:
       contents: write
     steps:
+      - name: Check out the verified release source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
       - name: Download verified distributions
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: release-distributions
           path: dist
+      - name: Re-verify downloaded release assets
+        run: >-
+          python -I src/regressistor/release_artifacts.py verify-release
+          --directory dist
+          --name "$RELEASE_PROJECT_NAME"
+          --version "$RELEASE_PROJECT_VERSION"
+          --syft-version "$RELEASE_SYFT_VERSION"
       - name: Create release exactly once
         env:
           GH_TOKEN: ${{ github.token }}
@@ -224,4 +406,9 @@ jobs:
             echo "GitHub release $RELEASE_TAG already exists; refusing to replace its assets."
             exit 1
           fi
-          gh release create "$RELEASE_TAG" dist/* --verify-tag --generate-notes --repo "$GITHUB_REPOSITORY"
+          gh release create "$RELEASE_TAG" \
+            "dist/regressistor-$RELEASE_PROJECT_VERSION-py3-none-any.whl" \
+            "dist/regressistor-$RELEASE_PROJECT_VERSION.tar.gz" \
+            dist/SBOM.spdx.json \
+            dist/SHA256SUMS \
+            --verify-tag --generate-notes --repo "$GITHUB_REPOSITORY"

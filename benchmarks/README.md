@@ -33,3 +33,10 @@ plus decision-count invariants. It also records the installed distribution versi
 content hashes for the imported Python package tree and executing harness. Timing is descriptive
 only: compare runs on the same host and interpreter, and never treat a duration as a CI threshold
 or speed guarantee.
+
+## Liberty NLDM import benchmark
+
+Run `python benchmarks/liberty_nldm_benchmark.py --repetitions 10` to measure strict conversion of
+the project-authored synthetic Liberty fixture. The report binds the fixture and harness hashes,
+records environment identity, checks point/source-count invariants on every repetition, and labels
+all timing as informational. It is parser evidence, not a real-PDK accuracy or performance claim.

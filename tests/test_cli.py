@@ -80,6 +80,51 @@ def test_check_pass_and_fail_exit_codes(tmp_path: Path, capsys: pytest.CaptureFi
     assert json.loads((fail_out / "report.json").read_text(encoding="utf-8"))["passed"] is False
 
 
+def test_check_output_is_no_clobber_and_never_overwrites_an_input(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    policy, baseline, candidate = write_inputs(tmp_path, candidate_gain=64.5)
+    output = tmp_path / "artifacts"
+    args = [
+        "check",
+        "--policy",
+        str(policy),
+        "--baseline",
+        str(baseline),
+        "--candidate",
+        str(candidate),
+        "--out",
+        str(output),
+    ]
+    assert main(args) == 0
+    before = (output / "report.json").read_bytes()
+    assert main(args) == 3
+    assert "refusing to overwrite" in capsys.readouterr().err
+    assert (output / "report.json").read_bytes() == before
+    assert main([*args, "--force"]) == 0
+
+    protected = tmp_path / "protected"
+    protected.mkdir()
+    candidate_alias = protected / "report.json"
+    candidate_alias.write_bytes(candidate.read_bytes())
+    alias_args = [
+        "check",
+        "--policy",
+        str(policy),
+        "--baseline",
+        str(baseline),
+        "--candidate",
+        str(candidate_alias),
+        "--out",
+        str(protected),
+        "--force",
+    ]
+    original = candidate_alias.read_bytes()
+    assert main(alias_args) == 3
+    assert "aliases an input" in capsys.readouterr().err
+    assert candidate_alias.read_bytes() == original
+
+
 def test_freeze_and_refuse_overwrite(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
     policy, _baseline, candidate = write_inputs(tmp_path)
     target = tmp_path / "frozen.json"
@@ -97,6 +142,11 @@ def test_freeze_and_refuse_overwrite(tmp_path: Path, capsys: pytest.CaptureFixtu
     assert main(args) == 3
     assert "refusing" in capsys.readouterr().err
     assert main([*args, "--force"]) == 0
+
+    original = candidate.read_bytes()
+    assert main([*args[:-1], str(candidate), "--force"]) == 3
+    assert "aliases an input" in capsys.readouterr().err
+    assert candidate.read_bytes() == original
 
 
 def test_inspect_text_and_json(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:

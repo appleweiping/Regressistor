@@ -9,6 +9,35 @@ permissions:
   contents: read
 
 jobs:
+  # Transitional check for the PR that first installs the trusted-base DCO
+  # workflow. Remove this job in the immediate follow-up PR after dco.yml is
+  # present on the protected base branch.
+  dco:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Require an author-matching DCO sign-off on every PR commit
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        shell: bash
+        run: |
+          failed=0
+          while read -r commit; do
+            author="$(git show -s --format='%an <%ae>' "$commit")"
+            if ! git show -s --format=%B "$commit" | git interpret-trailers --parse |
+              grep -Fxi -- "Signed-off-by: $author" >/dev/null; then
+              echo "::error::commit $commit lacks author-matching Signed-off-by: $author"
+              failed=1
+            fi
+          done < <(git rev-list "$BASE_SHA..$HEAD_SHA")
+          exit "$failed"
+
   actionlint:
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -52,3 +81,28 @@ jobs:
       - run: uv run --frozen pytest --cov=regressistor --cov-report=term-missing --cov-report=xml
       - if: matrix.quality
         run: uv run --frozen python -m build
+
+  openram-liberty-integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: VLSIDA/OpenRAM
+          ref: b2b069ce119d1488cbe6883b2240bceb5c7ce29a
+          path: external-openram
+          persist-credentials: false
+          sparse-checkout: compiler/tests/golden/sram_2_16_1_freepdk45_TT_1p0V_25C.lib
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: python -m pip install --disable-pip-version-check uv==0.11.21
+      - run: uv sync --frozen
+      - run: >-
+          uv run --frozen python tools/verify_openram_liberty.py
+          external-openram/compiler/tests/golden/sram_2_16_1_freepdk45_TT_1p0V_25C.lib

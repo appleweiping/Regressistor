@@ -8,6 +8,7 @@ import sys
 from collections.abc import Sequence
 from pathlib import Path
 
+from regressistor._output import preflight_output
 from regressistor._strict_data import load_json_text
 from regressistor._version import __version__
 from regressistor.bundle import freeze_bundle, load_bundle
@@ -20,6 +21,12 @@ from regressistor.model import Scalar, scalar_identity
 from regressistor.policy import load_policy
 from regressistor.render import console_summary, decision_text, write_artifacts
 from regressistor.report import load_report
+from regressistor.waveform import compare_waveforms
+from regressistor.waveform_json import (
+    load_waveform,
+    load_waveform_policy,
+    write_waveform_comparison,
+)
 
 
 def _emit(text: object, *, error: bool = False) -> None:
@@ -93,6 +100,23 @@ def _import_liberty(args: argparse.Namespace) -> int:
         f"(source SHA-256 {conversion.source_sha256})"
     )
     return 0
+
+
+def _waveform_check(args: argparse.Namespace) -> int:
+    protected = (args.policy, args.baseline, args.candidate)
+    preflight_output(args.out, context="waveform comparison", force=args.force, protected=protected)
+    result = compare_waveforms(
+        load_waveform(args.baseline),
+        load_waveform(args.candidate),
+        load_waveform_policy(args.policy),
+    )
+    write_waveform_comparison(result, args.out, force=args.force, protected=protected)
+    _emit(
+        f"Waveform {result.status}: {result.failing_breakpoints}/{result.evaluated_breakpoints} "
+        f"evaluated breakpoints exceed budget; full domain={result.full_domain_covered}"
+    )
+    _emit(f"Report: {args.out}")
+    return 0 if result.passed else 1
 
 
 def _parse_filter(raw: str) -> tuple[str, Scalar]:
@@ -175,6 +199,16 @@ def build_parser() -> argparse.ArgumentParser:
     liberty.add_argument("--out", required=True, type=Path)
     liberty.add_argument("--force", action="store_true")
     liberty.set_defaults(handler=_import_liberty)
+
+    waveform = subparsers.add_parser(
+        "waveform-check", help="compare exact-grid or continuous linear waveforms"
+    )
+    waveform.add_argument("--policy", required=True, type=Path)
+    waveform.add_argument("--baseline", required=True, type=Path)
+    waveform.add_argument("--candidate", required=True, type=Path)
+    waveform.add_argument("--out", required=True, type=Path)
+    waveform.add_argument("--force", action="store_true")
+    waveform.set_defaults(handler=_waveform_check)
 
     explain = subparsers.add_parser("explain", help="explain matching report decisions")
     explain.add_argument("--report", required=True, type=Path)

@@ -2,6 +2,31 @@
 
 All notable changes are recorded here. Versions follow semantic versioning.
 
+## 0.5.0 - 2026-09-09
+
+### Added
+
+- Immutable finite scalar waveforms, exact-grid and explicitly requested
+  continuous piecewise-linear comparison with rational interpolation and exact
+  SI-prefix conversion. Relative-floor crossings prevent endpoint-only false
+  passes; extrapolation is forbidden and partial domains never become full passes.
+- Bounded extrema, complete breakpoint/failure accounting and observation hashes,
+  with capped diagnostic witnesses and conservative work preflight.
+- Canonical binary64-hex waveform/policy JSON, exact rational comparison reports,
+  packaged structural schemas, safe public writers and the `waveform-check` CLI.
+- Independent rational, binary64, metamorphic and physical analytic oracles;
+  an original executable zero-crossing example and source-bound scale harness.
+- An unconditional real-ngspice waveform CI gate using a hash-verified public
+  SpiceTrellis wheel. Original RC transient and complex AC traces are checked
+  against analytic values, then compared on unequal grids; a doubled resistance
+  must fail the same predeclared budgets that the nominal traces pass.
+
+### Scope
+
+- The new profile compares scalar samples or continuous piecewise-linear traces.
+  It does not infer unsampled circuit behavior, unwrap phase, align discontinuous
+  events, use ULP budgets or convert report identities into authenticity claims.
+
 ## 0.4.1 - 2026-09-09
 
 ### Fixed

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/appleweiping/Regressistor/main/src/regressistor/schemas/waveform-v1.schema.json",
+  "title": "Regressistor binary64 waveform v1",
+  "description": "Structural schema. The runtime additionally checks canonical float.hex encodings, strict axis ordering, equal sample counts, exact supported units and the content identity.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "version", "identity", "name", "axis_unit", "value_unit", "axis", "values"],
+  "properties": {
+    "schema": {"const": "org.regressistor.waveform"},
+    "version": {"const": 1, "type": "integer"},
+    "identity": {"type": "string", "pattern": "^[0-9a-f]{64}$(?![\\s\\S])"},
+    "name": {"type": "string", "minLength": 1, "maxLength": 256},
+    "axis_unit": {"type": "string", "minLength": 1, "maxLength": 128},
+    "value_unit": {"type": "string", "minLength": 1, "maxLength": 128},
+    "axis": {"$ref": "#/$defs/samples"},
+    "values": {"$ref": "#/$defs/samples"}
+  },
+  "$defs": {
+    "binary64": {"type": "string", "minLength": 8, "maxLength": 64, "pattern": "^-?0x[01]\\.[0-9a-f]+p[+-][0-9]+$(?![\\s\\S])"},
+    "samples": {"type": "array", "minItems": 2, "maxItems": 100000, "items": {"$ref": "#/$defs/binary64"}}
+  }
+}

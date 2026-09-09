@@ -1,0 +1,48 @@
+{
+  "all_analytic_oracles_passed": true,
+  "baseline_id": "55137bfa2a0e6d7d41eb310b2b9b1b64c9da88a07800455cbaf8593aa2305062",
+  "benchmark": "regressistor-original-waveform-scale-v1",
+  "candidate_id": "979fdc19f4601d262154405064b26f8868400063977ee59d1752f4f286407c66",
+  "distribution_version": "0.5.0",
+  "environment": {
+    "machine": "AMD64",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "python": "3.11.2"
+  },
+  "evaluated_breakpoints": 100000,
+  "failing_breakpoints": 0,
+  "harness_sha256": "2fc7c596d9f2b8a899288a714c3546e6c04c7f02f472a2f8a0ed38164c43b034",
+  "memory": {
+    "method": "Windows PeakWorkingSetSize",
+    "peak_process_bytes": 40624128
+  },
+  "observations_sha256": "739fab60b5042b9e58ed81daa8273d2ae22fc59586ff5c008a2927948b253183",
+  "package_tree_sha256": "7c174ebdfc4f64fdfa24554613c2647dd58575671fc817ec607742319f6cfb2f",
+  "points_per_trace": 100000,
+  "policy": {
+    "absolute": "0x1.0000000000000p-3",
+    "domain": "full",
+    "grid": "exact",
+    "identity": "feb9a9d50b2bf2dca8a49e847045eef197795a483849b7bab924254cc014bad4",
+    "max_breakpoints": 400000,
+    "max_diagnostics": 16,
+    "relative": "0x0.0p+0",
+    "relative_floor": "0x0.0p+0",
+    "schema": "org.regressistor.waveform-policy",
+    "version": 1
+  },
+  "profile": "exact",
+  "report_bytes": 1854,
+  "report_sha256": "14bf12b688b0712ff9c55db5d6ebe0c08d4a463e0b219b9b26ce9562f3266f0e",
+  "retained_diagnostics": 0,
+  "schema_version": 1,
+  "scope": "API construction/comparison/report; no wire loading or simulator execution",
+  "seconds": {
+    "compare": 13.537484800001039,
+    "construct": 0.1933214999990014,
+    "report": 0.0007021000001259381,
+    "total": 13.731508400000166
+  },
+  "status": "pass",
+  "timing_policy": "Informational; fresh process per run; not a CI timing threshold."
+}

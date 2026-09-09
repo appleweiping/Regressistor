@@ -1,0 +1,91 @@
+{
+  "benchmark": "regressistor-scaling-v1",
+  "distribution_version": "0.5.0",
+  "environment": {
+    "implementation": "CPython",
+    "machine": "AMD64",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "python": "3.11.2"
+  },
+  "environment_sha256": "14bb8f80644dd099e1d4550006c6072751ab6e186a598403bf8c58aefa721a49",
+  "harness_sha256": "d6532bdcbef7260b094ba1c58ed180c250b98769642901940b737e5475294c3d",
+  "package_tree_sha256": "365bffc9c51187da447154ea366b7cdd98ef176402013b65fa4afb38c3b848d2",
+  "repetitions": 5,
+  "results": [
+    {
+      "invariants": {
+        "decision_count": 10,
+        "passed": true
+      },
+      "points": 10,
+      "stages": {
+        "compare": {
+          "median_seconds": 0.0004034,
+          "minimum_seconds": 0.0003321,
+          "points_per_second": 24789.291
+        },
+        "index": {
+          "median_seconds": 0.0000319,
+          "minimum_seconds": 0.0000295,
+          "points_per_second": 313479.614
+        },
+        "strict_load": {
+          "median_seconds": 0.0010822,
+          "minimum_seconds": 0.0010535,
+          "points_per_second": 9240.436
+        }
+      }
+    },
+    {
+      "invariants": {
+        "decision_count": 100,
+        "passed": true
+      },
+      "points": 100,
+      "stages": {
+        "compare": {
+          "median_seconds": 0.0039063,
+          "minimum_seconds": 0.0026004,
+          "points_per_second": 25599.672
+        },
+        "index": {
+          "median_seconds": 0.0003402,
+          "minimum_seconds": 0.0003201,
+          "points_per_second": 293944.738
+        },
+        "strict_load": {
+          "median_seconds": 0.0094619,
+          "minimum_seconds": 0.0082726,
+          "points_per_second": 10568.702
+        }
+      }
+    },
+    {
+      "invariants": {
+        "decision_count": 1000,
+        "passed": true
+      },
+      "points": 1000,
+      "stages": {
+        "compare": {
+          "median_seconds": 0.0511131,
+          "minimum_seconds": 0.0339921,
+          "points_per_second": 19564.456
+        },
+        "index": {
+          "median_seconds": 0.0068297,
+          "minimum_seconds": 0.0040008,
+          "points_per_second": 146419.316
+        },
+        "strict_load": {
+          "median_seconds": 0.0518719,
+          "minimum_seconds": 0.0426593,
+          "points_per_second": 19278.26
+        }
+      }
+    }
+  ],
+  "schema_version": 1,
+  "timing_policy": "Informational only; no timing value is an acceptance threshold.",
+  "workload_sha256": "6e049b433fe7b30d83dd11c48f8b63135d4f17d7c10aaaf66432f4100d65346f"
+}

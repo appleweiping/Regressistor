@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/appleweiping/Regressistor/main/src/regressistor/schemas/waveform-comparison-v1.schema.json",
+  "title": "Regressistor waveform comparison v1",
+  "description": "Exact observations and domains use reduced hexadecimal integer fractions. Hashes are consistency identities, not signatures or proofs that a comparison was run. Failure counts refer to evaluated breakpoints, not intervals or time duration.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "version", "identity", "baseline_id", "candidate_id", "policy", "scope", "status", "passed", "full_domain_covered", "axis_unit", "value_unit", "domain", "excluded_baseline", "excluded_candidate", "evaluated_breakpoints", "failing_breakpoints", "maximum_deviation", "maximum_excess", "diagnostics", "diagnostics_truncated", "observations_sha256"],
+  "properties": {
+    "schema": {"const": "org.regressistor.waveform-comparison"},
+    "version": {"const": 1, "type": "integer"},
+    "identity": {"$ref": "#/$defs/digest"},
+    "baseline_id": {"$ref": "#/$defs/digest"},
+    "candidate_id": {"$ref": "#/$defs/digest"},
+    "observations_sha256": {"$ref": "#/$defs/digest"},
+    "policy": {"$ref": "waveform-policy-v1.schema.json"},
+    "scope": {"enum": ["samples", "continuous_piecewise_linear"]},
+    "status": {"enum": ["pass", "fail", "partial_pass", "partial_fail"]},
+    "passed": {"type": "boolean"},
+    "full_domain_covered": {"type": "boolean"},
+    "axis_unit": {"type": "string", "minLength": 1, "maxLength": 128},
+    "value_unit": {"type": "string", "minLength": 1, "maxLength": 128},
+    "domain": {"$ref": "#/$defs/pair"},
+    "excluded_baseline": {"$ref": "#/$defs/pair"},
+    "excluded_candidate": {"$ref": "#/$defs/pair"},
+    "evaluated_breakpoints": {"type": "integer", "minimum": 2, "maximum": 400000},
+    "failing_breakpoints": {"type": "integer", "minimum": 0, "maximum": 400000},
+    "maximum_deviation": {"$ref": "#/$defs/observation"},
+    "maximum_excess": {"$ref": "#/$defs/observation"},
+    "diagnostics": {"type": "array", "maxItems": 64, "items": {"$ref": "#/$defs/observation"}},
+    "diagnostics_truncated": {"type": "boolean"}
+  },
+  "$defs": {
+    "digest": {"type": "string", "pattern": "^[0-9a-f]{64}$(?![\\s\\S])"},
+    "rational": {
+      "type": "object", "additionalProperties": false, "required": ["numerator", "denominator"],
+      "properties": {
+        "numerator": {"type": "string", "pattern": "^(?:0x0|-?0x[1-9a-f][0-9a-f]*)$(?![\\s\\S])"},
+        "denominator": {"type": "string", "pattern": "^0x[1-9a-f][0-9a-f]*$(?![\\s\\S])"}
+      }
+    },
+    "pair": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"$ref": "#/$defs/rational"}},
+    "observation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["axis", "baseline", "candidate", "allowed", "deviation", "excess"],
+      "properties": {
+        "axis": {"$ref": "#/$defs/rational"}, "baseline": {"$ref": "#/$defs/rational"},
+        "candidate": {"$ref": "#/$defs/rational"}, "allowed": {"$ref": "#/$defs/rational"},
+        "deviation": {"$ref": "#/$defs/rational"}, "excess": {"$ref": "#/$defs/rational"}
+      }
+    }
+  }
+}

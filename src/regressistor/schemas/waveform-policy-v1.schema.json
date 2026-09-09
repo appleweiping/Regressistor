@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/appleweiping/Regressistor/main/src/regressistor/schemas/waveform-policy-v1.schema.json",
+  "title": "Regressistor waveform policy v1",
+  "description": "Budget values are canonical nonnegative binary64 hex strings in baseline ordinate units (relative is dimensionless). Runtime validates canonical values and the content identity.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "version", "identity", "absolute", "relative", "relative_floor", "grid", "domain", "max_breakpoints", "max_diagnostics"],
+  "properties": {
+    "schema": {"const": "org.regressistor.waveform-policy"},
+    "version": {"const": 1, "type": "integer"},
+    "identity": {"type": "string", "pattern": "^[0-9a-f]{64}$(?![\\s\\S])"},
+    "absolute": {"$ref": "#/$defs/budget"},
+    "relative": {"$ref": "#/$defs/budget"},
+    "relative_floor": {"$ref": "#/$defs/budget"},
+    "grid": {"enum": ["exact", "linear"]},
+    "domain": {"enum": ["full", "intersection"]},
+    "max_breakpoints": {"type": "integer", "minimum": 1, "maximum": 400000},
+    "max_diagnostics": {"type": "integer", "minimum": 1, "maximum": 64}
+  },
+  "$defs": {
+    "budget": {"type": "string", "minLength": 8, "maxLength": 64, "pattern": "^0x[01]\\.[0-9a-f]+p[+-][0-9]+$(?![\\s\\S])"}
+  }
+}

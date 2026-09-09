@@ -29,6 +29,16 @@ python -m pip install -e ".[dev]"
 
 The runtime has no third-party dependencies.
 
+## Waveform comparison
+
+Compare exact grids or explicitly requested continuous piecewise-linear scalar
+traces with unit-aware absolute/relative budgets. The comparator includes
+relative-floor crossings, preserves exact rational error witnesses, rejects
+extrapolation and never presents a truncated domain as a full pass. Canonical
+trace/policy JSON, protected output writes and `waveform-check` support CI use.
+See [the waveform API, CLI and numeric contract](docs/waveforms.md) and the
+original zero-crossing example in `examples/waveform/generate.py`.
+
 ## Liberty NLDM import
 
 Strictly convert characterized Liberty timing and internal-power data into the ordinary

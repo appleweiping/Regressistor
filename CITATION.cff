@@ -9,7 +9,7 @@ authors:
 repository-code: "https://github.com/appleweiping/Regressistor"
 url: "https://github.com/appleweiping/Regressistor"
 license: MIT
-version: 0.4.1
+version: 0.5.0
 date-released: 2026-09-09
 keywords:
   - analog verification

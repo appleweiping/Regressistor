@@ -15,7 +15,7 @@ permissions:
 
 env:
   RELEASE_PROJECT_NAME: regressistor
-  RELEASE_PROJECT_VERSION: "0.4.1"
+  RELEASE_PROJECT_VERSION: "0.5.0"
   RELEASE_SYFT_VERSION: "1.51.1"
 
 jobs:
@@ -180,11 +180,34 @@ jobs:
               "docs/liberty-nldm.md",
               "docs/validation.md",
               "benchmarks/liberty_nldm_benchmark.py",
+              "benchmarks/waveform_scale.py",
+              "benchmarks/waveform_simulator_oracle.py",
+              "benchmarks/evidence/waveform-ngspice42-v050-20260909.json",
+              "benchmarks/results/waveform-v050-scalar-regression-final-20260909.json",
+              "benchmarks/results/waveform-scale-v050-exact-100k-windows-final-20260909.json",
+              "benchmarks/results/waveform-scale-v050-floor-100k-windows-final-20260909.json",
+              "docs/waveforms.md",
+              "docs/waveform-simulator-oracle.md",
+              "examples/waveform/generate.py",
+              "tests/test_waveform.py",
+              "tests/test_waveform_json.py",
+              "tests/test_waveform_oracle.py",
+              "tests/test_waveform_adversarial.py",
+              "tests/test_waveform_wire_oracle.py",
+              "tests/test_waveform_simulator_oracle.py",
+              "tests/test_waveform_workflow.py",
+              "tests/test_waveform_example.py",
+              "tests/test_waveform_scale.py",
               "tests/fixtures/synthetic_nldm.lib",
               "tools/verify_openram_liberty.py",
               "src/regressistor/dco.py",
               "src/regressistor/distribution_audit.py",
               "src/regressistor/liberty.py",
+              "src/regressistor/waveform.py",
+              "src/regressistor/waveform_json.py",
+              "src/regressistor/schemas/waveform-v1.schema.json",
+              "src/regressistor/schemas/waveform-policy-v1.schema.json",
+              "src/regressistor/schemas/waveform-comparison-v1.schema.json",
               "src/regressistor/release_artifacts.py",
               "tests/test_release_artifacts.py",
               "tests/test_release_workflow.py",
@@ -200,6 +223,11 @@ jobs:
               "regressistor/_version.py",
               "regressistor/distribution_audit.py",
               "regressistor/liberty.py",
+              "regressistor/waveform.py",
+              "regressistor/waveform_json.py",
+              "regressistor/schemas/waveform-v1.schema.json",
+              "regressistor/schemas/waveform-policy-v1.schema.json",
+              "regressistor/schemas/waveform-comparison-v1.schema.json",
               "regressistor/release_artifacts.py",
               "regressistor/py.typed",
           }
@@ -222,39 +250,46 @@ jobs:
           PY
           cd "$source_root/regressistor-$RELEASE_PROJECT_VERSION"
           uv sync --frozen --extra dev
-          uv run --frozen pytest
+          uv run --frozen pytest --cov=regressistor --cov-branch --cov-report=term-missing
       - name: Install wheel and smoke-check metadata and CLI version
         run: |
           python -m venv .release-smoke
           .release-smoke/bin/python -m pip install --disable-pip-version-check --no-deps dist/*.whl
           .release-smoke/bin/python -I - <<'PY'
+          import contextlib
           import json
           import subprocess
           import tempfile
           from pathlib import Path
           from importlib.metadata import version
+          from importlib.resources import files
 
-          import regressistor
+          launcher = Path(".release-smoke/bin/regressistor").resolve(strict=True)
+          fixture = Path("tests/fixtures/synthetic_nldm.lib").resolve(strict=True)
+          installation = launcher.parent.parent
+          with tempfile.TemporaryDirectory() as directory, contextlib.chdir(directory):
+              import regressistor
 
-          expected = version("regressistor")
-          if regressistor.__version__ != expected:
-              raise SystemExit("runtime and distribution versions differ")
-          completed = subprocess.run(
-              [".release-smoke/bin/regressistor", "--version"],
-              check=True,
-              capture_output=True,
-              text=True,
-          )
-          if completed.stdout.strip() != f"regressistor {expected}":
-              raise SystemExit("CLI version does not match distribution metadata")
-          with tempfile.TemporaryDirectory() as directory:
+              if not Path(regressistor.__file__).resolve().is_relative_to(installation):
+                  raise SystemExit("wheel smoke imported a package outside its installation")
+              expected = version("regressistor")
+              if regressistor.__version__ != expected:
+                  raise SystemExit("runtime and distribution versions differ")
+              completed = subprocess.run(
+                  [str(launcher), "--version"],
+                  check=True,
+                  capture_output=True,
+                  text=True,
+              )
+              if completed.stdout.strip() != f"regressistor {expected}":
+                  raise SystemExit("CLI version does not match distribution metadata")
               output = Path(directory) / "liberty.json"
               subprocess.run(
                   [
-                      ".release-smoke/bin/regressistor",
+                      str(launcher),
                       "import-liberty",
                       "--input",
-                      "tests/fixtures/synthetic_nldm.lib",
+                      str(fixture),
                       "--out",
                       str(output),
                   ],
@@ -267,6 +302,50 @@ jobs:
                   raise SystemExit("installed Liberty conversion contract is invalid")
               if len(converted["points"]) != 33:
                   raise SystemExit("installed Liberty conversion point count is invalid")
+              for name in ("waveform-v1", "waveform-policy-v1", "waveform-comparison-v1"):
+                  schema = json.loads(files("regressistor").joinpath(
+                      f"schemas/{name}.schema.json"
+                  ).read_text(encoding="utf-8"))
+                  if schema["$schema"] != "https://json-schema.org/draft/2020-12/schema":
+                      raise SystemExit("installed waveform schema has the wrong dialect")
+              baseline = regressistor.Waveform((0, 1), (-1, 1), "s", "V")
+              candidate = regressistor.Waveform((0, 1), (-1.125, 0.875), "s", "V")
+              policy = regressistor.WaveformPolicy(relative=0.25, grid="linear")
+              root = Path(directory)
+              baseline_path = root / "baseline.json"
+              candidate_path = root / "candidate.json"
+              policy_path = root / "policy.json"
+              report_path = root / "waveform-report.json"
+              regressistor.write_waveform(baseline, baseline_path)
+              regressistor.write_waveform(candidate, candidate_path)
+              regressistor.write_waveform_policy(policy, policy_path)
+              arguments = [
+                  str(launcher), "waveform-check",
+                  "--policy", str(policy_path), "--baseline", str(baseline_path),
+                  "--candidate", str(candidate_path),
+              ]
+              checked = subprocess.run(
+                  [*arguments, "--out", str(report_path)],
+                  check=False, capture_output=True, text=True,
+              )
+              waveform_report = json.loads(report_path.read_text(encoding="utf-8"))
+              if (
+                  checked.returncode != 1 or checked.stderr
+                  or waveform_report["status"] != "fail"
+                  or waveform_report["evaluated_breakpoints"] != 3
+                  or waveform_report["failing_breakpoints"] != 1
+                  or waveform_report["maximum_excess"]["axis"] != {
+                      "numerator": "0x1", "denominator": "0x2"
+                  }
+              ):
+                  raise SystemExit("installed waveform CLI missed the interior zero-crossing failure")
+              protected_bytes = baseline_path.read_bytes()
+              protected = subprocess.run(
+                  [*arguments, "--out", str(baseline_path), "--force"],
+                  check=False, capture_output=True, text=True,
+              )
+              if protected.returncode != 3 or baseline_path.read_bytes() != protected_bytes:
+                  raise SystemExit("installed waveform CLI failed to protect its input")
           PY
           site_packages="$(.release-smoke/bin/python -I -c 'import sysconfig; print(sysconfig.get_path("purelib"))')"
           installation_root="$(realpath .release-smoke)"

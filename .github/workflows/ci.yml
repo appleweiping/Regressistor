@@ -77,3 +77,94 @@ jobs:
       - run: >-
           uv run --frozen python tools/verify_openram_liberty.py
           external-openram/compiler/tests/golden/sram_2_16_1_freepdk45_TT_1p0V_25C.lib
+
+  waveform-simulator-integration:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.11.16"
+      - name: Install the exact Ubuntu Noble simulator package
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Official Noble amd64 package metadata:
+          # https://packages.ubuntu.com/noble/amd64/ngspice/download
+          # Package SHA256: 466c4c06418107ceaa9c9457065b3bb71a9d9dc5ec6fef186d7de9d5208ce8db
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends ngspice=42+ds-3build1
+          test "$(dpkg-query -W -f='${Version}' ngspice)" = '42+ds-3build1'
+          printf '%s  %s\n' \
+            820658317b0b54035208da41936fd6871ce924036e5ea4113a4168b821b7fc45 \
+            /usr/bin/ngspice | sha256sum --check --strict
+      - name: Install the verified public SpiceTrellis wheel and this source
+        shell: bash
+        run: |
+          set -euo pipefail
+          wheel="$RUNNER_TEMP/spicetrellis-0.6.0-py3-none-any.whl"
+          curl --fail --location --proto '=https' --tlsv1.2 --retry 3 \
+            --max-time 120 --max-filesize 4194304 \
+            --output "$wheel" \
+            https://github.com/appleweiping/SpiceTrellis/releases/download/v0.6.0/spicetrellis-0.6.0-py3-none-any.whl
+          printf '%s  %s\n' \
+            59f2c73554a0318b817ff02f8fdd7d82c34911ef7d9752f111a64d9244cc1860 \
+            "$wheel" | sha256sum --check --strict
+          python -m venv "$RUNNER_TEMP/waveform-env"
+          "$RUNNER_TEMP/waveform-env/bin/python" -I -m pip install \
+            --disable-pip-version-check --no-deps "$wheel"
+          "$RUNNER_TEMP/waveform-env/bin/python" -I -m pip install \
+            --disable-pip-version-check --no-deps --editable "$GITHUB_WORKSPACE"
+      - name: Verify the actual isolated harness interpreter and import origins
+        shell: bash
+        working-directory: ${{ runner.temp }}
+        run: |
+          set -euo pipefail
+          "$RUNNER_TEMP/waveform-env/bin/python" -I - <<'PY'
+          import importlib.metadata
+          import os
+          import sys
+          from pathlib import Path
+
+          import regressistor
+          import spicetrellis
+
+          expected_environment = Path(os.environ["RUNNER_TEMP"]) / "waveform-env"
+          expected_source = Path(os.environ["GITHUB_WORKSPACE"]) / "src/regressistor/__init__.py"
+          if sys.flags.isolated != 1 or Path(sys.prefix).resolve() != expected_environment.resolve():
+              raise SystemExit("waveform oracle is not using its isolated environment")
+          if Path(regressistor.__file__).resolve() != expected_source.resolve():
+              raise SystemExit("waveform oracle is not importing the checked-out Regressistor source")
+          if not Path(spicetrellis.__file__).resolve().is_relative_to(expected_environment.resolve()):
+              raise SystemExit("public SpiceTrellis import was shadowed by an external source tree")
+          if importlib.metadata.version("spicetrellis") != "0.6.0":
+              raise SystemExit("wrong SpiceTrellis distribution version")
+          print("validated the isolated source/public-wheel import boundary")
+          PY
+      - name: Execute all real RC waveform oracle gates
+        shell: bash
+        working-directory: ${{ runner.temp }}
+        run: |
+          set -euo pipefail
+          "$RUNNER_TEMP/waveform-env/bin/python" -I \
+            "$GITHUB_WORKSPACE/benchmarks/waveform_simulator_oracle.py" \
+            --ngspice /usr/bin/ngspice \
+            --expected-sha256 820658317b0b54035208da41936fd6871ce924036e5ea4113a4168b821b7fc45 \
+            --spicetrellis-wheel "$RUNNER_TEMP/spicetrellis-0.6.0-py3-none-any.whl" \
+            --output "$RUNNER_TEMP/waveform-oracle-run"
+          test "$(stat -c %s "$RUNNER_TEMP/waveform-oracle-run/report.json")" -le 8388608
+      - name: Retain source-bound oracle report and bounded process logs
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: waveform-simulator-oracle-${{ github.run_id }}-${{ github.run_attempt }}
+          if-no-files-found: warn
+          retention-days: 14
+          path: |
+            ${{ runner.temp }}/waveform-oracle-run/report.json
+            ${{ runner.temp }}/waveform-oracle-run/*/stdout.txt
+            ${{ runner.temp }}/waveform-oracle-run/*/stderr.txt
+            ${{ runner.temp }}/waveform-oracle-run/*/ngspice.log

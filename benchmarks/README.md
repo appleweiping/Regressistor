@@ -34,6 +34,46 @@ content hashes for the imported Python package tree and executing harness. Timin
 only: compare runs on the same host and interpreter, and never treat a duration as a CI threshold
 or speed guarantee.
 
+The current scalar-regression manifest was refreshed by an actual v0.5.0 run;
+its [source-bound report](results/waveform-v050-scalar-regression-final-20260909.json)
+retains the original 10/100/1000-point workload and unchanged verdict invariants.
+
+## Waveform work and memory
+
+Run each profile in a fresh process and choose a new output filename:
+
+```bash
+python benchmarks/waveform_scale.py --points 100000 --profile exact --output exact.json
+python benchmarks/waveform_scale.py --points 100000 --profile floor-crossings --output linear.json
+```
+
+Both traces contain 100,000 samples in the recorded runs. The original baseline
+alternates between -1 and +1 V; the candidate has an exactly representable 0.125 V
+offset. Exact mode permits that offset. Linear mode instead uses a 25% relative
+budget and 0.25 V floor: every original knot passes, but both floor crossings in
+every segment fail. The independently known counts are therefore 299,998 evaluated
+breakpoints and 199,998 failing breakpoints, with maximum excess exactly 1/16 V.
+Only 16 diagnostic witnesses are retained; the complete evaluation is hash-bound.
+
+| Profile | Evaluated / failing | Comparison time | OS process peak | Evidence |
+| --- | ---: | ---: | ---: | --- |
+| Exact grid | 100,000 / 0 | 13.5375 s | 40,624,128 bytes | [JSON](results/waveform-scale-v050-exact-100k-windows-final-20260909.json) |
+| Linear with floor crossings | 299,998 / 199,998 | 52.4962 s | 40,656,896 bytes | [JSON](results/waveform-scale-v050-floor-100k-windows-final-20260909.json) |
+
+These Windows CPython 3.11.2 results bind Regressistor 0.5.0 imported Python-tree
+SHA-256 `7c174ebdfc4f64fdfa24554613c2647dd58575671fc817ec607742319f6cfb2f`
+and harness SHA-256 `2fc7c596d9f2b8a899288a714c3546e6c04c7f02f472a2f8a0ed38164c43b034`.
+Peak working set is an OS process-lifetime high-water measurement, including
+interpreter imports and both retained traces, sampled after construction,
+comparison and report serialization. It is not incremental comparator allocation
+or a kernel-enforced memory quota. The benchmark uses the API, not wire loading or
+a simulator. Timings include concurrent host-load effects and are informational;
+they do not establish general performance superiority. Earlier result filenames
+without `final` retain their original source hashes and are not relabeled.
+
+The [separate real RC simulator oracle](../docs/waveform-simulator-oracle.md)
+checks actual transient and complex-AC projections across unequal grids.
+
 ## Liberty NLDM import benchmark
 
 Run `python benchmarks/liberty_nldm_benchmark.py --repetitions 10` to measure strict conversion of

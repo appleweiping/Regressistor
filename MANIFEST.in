@@ -9,7 +9,7 @@ include uv.lock
 recursive-include .github/workflows *.yml
 recursive-include docs *.md *.svg
 recursive-include docs/schemas *.json
-recursive-include examples *.json *.md *.toml
+recursive-include examples *.json *.md *.toml *.py
 recursive-include benchmarks *.json *.md *.py *.toml
 recursive-include tests *.py
 recursive-include tests *.lib

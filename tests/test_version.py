@@ -12,7 +12,7 @@ from regressistor.cli import main
 def test_runtime_distribution_and_cli_versions_agree(
     capsys: pytest.CaptureFixture[str],
 ) -> None:
-    assert __version__ == version("regressistor") == "0.4.1"
+    assert __version__ == version("regressistor") == "0.5.0"
     with pytest.raises(SystemExit) as raised:
         main(["--version"])
     assert raised.value.code == 0

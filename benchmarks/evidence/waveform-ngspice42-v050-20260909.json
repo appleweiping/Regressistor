@@ -1,0 +1,3228 @@
+{
+  "all_expected_verdicts": true,
+  "cases": {
+    "changed-resistance": {
+      "analyses": {
+        "ac": {
+          "analytic_checks": {
+            "imaginary": {
+              "axis_unit": "Hz",
+              "baseline_id": "cbddb26672215fa39ca09747fc612e442b7725793b51aae9653579f6ce202001",
+              "candidate_id": "57ae20f0fa6927a19b387130e54a3a10f9db7db5c42e3cecfacf1156c4945206",
+              "diagnostics": [],
+              "diagnostics_truncated": false,
+              "domain": [
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                },
+                {
+                  "denominator": "0x1",
+                  "numerator": "0xfa0"
+                }
+              ],
+              "evaluated_breakpoints": 161,
+              "excluded_baseline": [
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                },
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                }
+              ],
+              "excluded_candidate": [
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                },
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                }
+              ],
+              "failing_breakpoints": 0,
+              "full_domain_covered": true,
+              "identity": "2a1b23576eaf5743e91c36b78512bc44aeee205b462f8995f15f3c9a60654c8e",
+              "maximum_deviation": {
+                "allowed": {
+                  "denominator": "0x80000000000000000000000",
+                  "numerator": "0x119799812dea11"
+                },
+                "axis": {
+                  "denominator": "0x1",
+                  "numerator": "0x32"
+                },
+                "baseline": {
+                  "denominator": "0x10000000000000",
+                  "numerator": "-0x73527a03dc05b"
+                },
+                "candidate": {
+                  "denominator": "0x20000000000000",
+                  "numerator": "-0xe6a4f407b80b7"
+                },
+                "deviation": {
+                  "denominator": "0x20000000000000",
+                  "numerator": "0x1"
+                },
+                "excess": {
+                  "denominator": "0x80000000000000000000000",
+                  "numerator": "-0x119759812dea11"
+                }
+              },
+              "maximum_excess": {
+                "allowed": {
+                  "denominator": "0x80000000000000000000000",
+                  "numerator": "0x119799812dea11"
+                },
+                "axis": {
+                  "denominator": "0x1",
+                  "numerator": "0x32"
+                },
+                "baseline": {
+                  "denominator": "0x10000000000000",
+                  "numerator": "-0x73527a03dc05b"
+                },
+                "candidate": {
+                  "denominator": "0x20000000000000",
+                  "numerator": "-0xe6a4f407b80b7"
+                },
+                "deviation": {
+                  "denominator": "0x20000000000000",
+                  "numerator": "0x1"
+                },
+                "excess": {
+                  "denominator": "0x80000000000000000000000",
+                  "numerator": "-0x119759812dea11"
+                }
+              },
+              "observations_sha256": "c6bbe8b19ba948c4698b8bc398e26900ca9190366e0c33f4675af2e8471e3ed3",
+              "passed": true,
+              "policy": {
+                "absolute": "0x1.19799812dea11p-39",
+                "domain": "full",
+                "grid": "exact",
+                "identity": "db4e26fc3ee0c084c29b1023daf637722f54a8f8460c4a1d2e48f28de6ee0417",
+                "max_breakpoints": 400000,
+                "max_diagnostics": 16,
+                "relative": "0x0.0p+0",
+                "relative_floor": "0x0.0p+0",
+                "schema": "org.regressistor.waveform-policy",
+                "version": 1
+              },
+              "schema": "org.regressistor.waveform-comparison",
+              "scope": "samples",
+              "status": "pass",
+              "value_unit": "V",
+              "version": 1
+            },
+            "real": {
+              "axis_unit": "Hz",
+              "baseline_id": "cb9ca3e7f31724c68753bc302e824f60a9709e0f60017e3caa070fa5602575e9",
+              "candidate_id": "fe619d2db9c1795d9da83128fd3d7b3a427e19e439ce36a90d76ef11ddd012a7",
+              "diagnostics": [],
+              "diagnostics_truncated": false,
+              "domain": [
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                },
+                {
+                  "denominator": "0x1",
+                  "numerator": "0xfa0"
+                }
+              ],
+              "evaluated_breakpoints": 161,
+              "excluded_baseline": [
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                },
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                }
+              ],
+              "excluded_candidate": [
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                },
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                }
+              ],
+              "failing_breakpoints": 0,
+              "full_domain_covered": true,
+              "identity": "6a411bc3eccc2c19560cea1fae4b36f1ce5b5b53a641720bd3dfc3ad85b1cbfb",
+              "maximum_deviation": {
+                "allowed": {
+                  "denominator": "0x80000000000000000000000",
+                  "numerator": "0x119799812dea11"
+                },
+                "axis": {
+                  "denominator": "0x1",
+                  "numerator": "0x19"
+                },
+                "baseline": {
+                  "denominator": "0x10000000000000",
+                  "numerator": "0xe900e3f67f12f"
+                },
+                "candidate": {
+                  "denominator": "0x20000000000000",
+                  "numerator": "0x1d201c7ecfe25d"
+                },
+                "deviation": {
+                  "denominator": "0x20000000000000",
+                  "numerator": "0x1"
+                },
+                "excess": {
+                  "denominator": "0x80000000000000000000000",
+                  "numerator": "-0x119759812dea11"
+                }
+              },
+              "maximum_excess": {
+                "allowed": {
+                  "denominator": "0x80000000000000000000000",
+                  "numerator": "0x119799812dea11"
+                },
+                "axis": {
+                  "denominator": "0x1",
+                  "numerator": "0x19"
+                },
+                "baseline": {
+                  "denominator": "0x10000000000000",
+                  "numerator": "0xe900e3f67f12f"
+                },
+                "candidate": {
+                  "denominator": "0x20000000000000",
+                  "numerator": "0x1d201c7ecfe25d"
+                },
+                "deviation": {
+                  "denominator": "0x20000000000000",
+                  "numerator": "0x1"
+                },
+                "excess": {
+                  "denominator": "0x80000000000000000000000",
+                  "numerator": "-0x119759812dea11"
+                }
+              },
+              "observations_sha256": "0dbd1a8217c261ede9939cffdf5d3fb8189b5bd42739c62f36a0109d88bc332c",
+              "passed": true,
+              "policy": {
+                "absolute": "0x1.19799812dea11p-39",
+                "domain": "full",
+                "grid": "exact",
+                "identity": "db4e26fc3ee0c084c29b1023daf637722f54a8f8460c4a1d2e48f28de6ee0417",
+                "max_breakpoints": 400000,
+                "max_diagnostics": 16,
+                "relative": "0x0.0p+0",
+                "relative_floor": "0x0.0p+0",
+                "schema": "org.regressistor.waveform-policy",
+                "version": 1
+              },
+              "schema": "org.regressistor.waveform-comparison",
+              "scope": "samples",
+              "status": "pass",
+              "value_unit": "V",
+              "version": 1
+            }
+          },
+          "boundary": {
+            "points": 161,
+            "raw_sha256": "e524b096e540f54192d8e2c4b03ca4df25ae52bc091b0df1a2c18705c1d768d4",
+            "spicetrellis_wire_sha256": "5ad3b0f2da31fe121ec844a455788fee7548e93bbebd1c71da808cb580623fe4",
+            "waveform_identities": {
+              "imaginary": "57ae20f0fa6927a19b387130e54a3a10f9db7db5c42e3cecfacf1156c4945206",
+              "real": "fe619d2db9c1795d9da83128fd3d7b3a427e19e439ce36a90d76ef11ddd012a7"
+            }
+          }
+        },
+        "transient": {
+          "analytic_checks": {
+            "real": {
+              "axis_unit": "s",
+              "baseline_id": "5059910e5e46ab571d4a53906270b98bba571071a56dcc7e990a9b1a6a9a03a7",
+              "candidate_id": "d75611a6684041dddcb3f1335f814ce86e7fe38700d1fc94b837f86e1dd03af6",
+              "diagnostics": [],
+              "diagnostics_truncated": false,
+              "domain": [
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                },
+                {
+                  "denominator": "0x800000000000000",
+                  "numerator": "0xc49ba5e353f7d"
+                }
+              ],
+              "evaluated_breakpoints": 1246,
+              "excluded_baseline": [
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                },
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                }
+              ],
+              "excluded_candidate": [
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                },
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                }
+              ],
+              "failing_breakpoints": 0,
+              "full_domain_covered": true,
+              "identity": "6c2a3f494e6fea12d9d4fe7b22f17a86825cc485a3bb58539c04eee0a42d6df1",
+              "maximum_deviation": {
+                "allowed": {
+                  "denominator": "0x2000000000000000",
+                  "numerator": "0x4189374bc6a7f"
+                },
+                "axis": {
+                  "denominator": "0x800000000000000",
+                  "numerator": "0x6588dd2737d03"
+                },
+                "baseline": {
+                  "denominator": "0x20000000000000",
+                  "numerator": "0x14c41b0e37ddcd"
+                },
+                "candidate": {
+                  "denominator": "0x20000000000000",
+                  "numerator": "0x14c41b7068e7f9"
+                },
+                "deviation": {
+                  "denominator": "0x8000000000000",
+                  "numerator": "0x188c428b"
+                },
+                "excess": {
+                  "denominator": "0x2000000000000000",
+                  "numerator": "-0x4183143b23e7f"
+                }
+              },
+              "maximum_excess": {
+                "allowed": {
+                  "denominator": "0x2000000000000000",
+                  "numerator": "0x4189374bc6a7f"
+                },
+                "axis": {
+                  "denominator": "0x800000000000000",
+                  "numerator": "0x6588dd2737d03"
+                },
+                "baseline": {
+                  "denominator": "0x20000000000000",
+                  "numerator": "0x14c41b0e37ddcd"
+                },
+                "candidate": {
+                  "denominator": "0x20000000000000",
+                  "numerator": "0x14c41b7068e7f9"
+                },
+                "deviation": {
+                  "denominator": "0x8000000000000",
+                  "numerator": "0x188c428b"
+                },
+                "excess": {
+                  "denominator": "0x2000000000000000",
+                  "numerator": "-0x4183143b23e7f"
+                }
+              },
+              "observations_sha256": "25390c22e44afc12b8663a836a8cd35793fd1045e01f0860eb9deefaa330f159",
+              "passed": true,
+              "policy": {
+                "absolute": "0x1.0624dd2f1a9fcp-11",
+                "domain": "full",
+                "grid": "exact",
+                "identity": "b98baca50e42a3f91dd7ee77fdd5a14b8df0976e70486a602d92e9b47dd630f9",
+                "max_breakpoints": 400000,
+                "max_diagnostics": 16,
+                "relative": "0x0.0p+0",
+                "relative_floor": "0x0.0p+0",
+                "schema": "org.regressistor.waveform-policy",
+                "version": 1
+              },
+              "schema": "org.regressistor.waveform-comparison",
+              "scope": "samples",
+              "status": "pass",
+              "value_unit": "V",
+              "version": 1
+            }
+          },
+          "boundary": {
+            "points": 1246,
+            "raw_sha256": "d42c25a4f4c13aecbf56259f823a9f9915e396ddf205510f9af7329210ca47bf",
+            "spicetrellis_wire_sha256": "2e2ca4e1b48b33642ecb745b93effe887eb9af7bed3196ed7de8ffbc8ac64779",
+            "waveform_identities": {
+              "real": "d75611a6684041dddcb3f1335f814ce86e7fe38700d1fc94b837f86e1dd03af6"
+            }
+          }
+        }
+      },
+      "deck_sha256": "7674788884adc35546c6f96dfb66855cd8d745ceefed6aafcefe7d3217cca90f",
+      "process": {
+        "arguments": [
+          "-n",
+          "-b",
+          "-o",
+          "ngspice.log",
+          "experiment.cir"
+        ],
+        "files": {
+          "ac.raw": {
+            "bytes": 16067,
+            "sha256": "e524b096e540f54192d8e2c4b03ca4df25ae52bc091b0df1a2c18705c1d768d4"
+          },
+          "ngspice.log": {
+            "bytes": 748,
+            "sha256": "75791740d0c91bfc488dea433a97e3627c8895273dccea5ec19b10b3e022e771"
+          },
+          "stderr.txt": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stdout.txt": {
+            "bytes": 522,
+            "sha256": "4b20cd0bcbba68cfacf776b6a8a2c9514b0530a88145bc95807001c649dac3df"
+          },
+          "transient.raw": {
+            "bytes": 67654,
+            "sha256": "d42c25a4f4c13aecbf56259f823a9f9915e396ddf205510f9af7329210ca47bf"
+          }
+        },
+        "returncode": 0,
+        "wall_seconds": 0.046999999998661224
+      }
+    },
+    "nominal-coarse": {
+      "analyses": {
+        "ac": {
+          "analytic_checks": {
+            "imaginary": {
+              "axis_unit": "Hz",
+              "baseline_id": "19b785efd9e1e0462d1f88b9cad3e5c2edeebe176a1dff609d1558a078d1dfec",
+              "candidate_id": "ca949f1b8be10b2fc54ce7429d479404364e6fc3a701b1a9f74e4cac0d6cbe85",
+              "diagnostics": [],
+              "diagnostics_truncated": false,
+              "domain": [
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                },
+                {
+                  "denominator": "0x1",
+                  "numerator": "0xfa0"
+                }
+              ],
+              "evaluated_breakpoints": 81,
+              "excluded_baseline": [
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                },
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                }
+              ],
+              "excluded_candidate": [
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                },
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                }
+              ],
+              "failing_breakpoints": 0,
+              "full_domain_covered": true,
+              "identity": "87be2eb3e765fc0defce7695d790d0a5cff2bcdb7e9669cfde3fc8b3a5c5654a",
+              "maximum_deviation": {
+                "allowed": {
+                  "denominator": "0x80000000000000000000000",
+                  "numerator": "0x119799812dea11"
+                },
+                "axis": {
+                  "denominator": "0x1",
+                  "numerator": "0x64"
+                },
+                "baseline": {
+                  "denominator": "0x10000000000000",
+                  "numerator": "-0x73527a03dc05b"
+                },
+                "candidate": {
+                  "denominator": "0x20000000000000",
+                  "numerator": "-0xe6a4f407b80b7"
+                },
+                "deviation": {
+                  "denominator": "0x20000000000000",
+                  "numerator": "0x1"
+                },
+                "excess": {
+                  "denominator": "0x80000000000000000000000",
+                  "numerator": "-0x119759812dea11"
+                }
+              },
+              "maximum_excess": {
+                "allowed": {
+                  "denominator": "0x80000000000000000000000",
+                  "numerator": "0x119799812dea11"
+                },
+                "axis": {
+                  "denominator": "0x1",
+                  "numerator": "0x64"
+                },
+                "baseline": {
+                  "denominator": "0x10000000000000",
+                  "numerator": "-0x73527a03dc05b"
+                },
+                "candidate": {
+                  "denominator": "0x20000000000000",
+                  "numerator": "-0xe6a4f407b80b7"
+                },
+                "deviation": {
+                  "denominator": "0x20000000000000",
+                  "numerator": "0x1"
+                },
+                "excess": {
+                  "denominator": "0x80000000000000000000000",
+                  "numerator": "-0x119759812dea11"
+                }
+              },
+              "observations_sha256": "7fcce4033eda03422504a527d45469f3db23f7017974b64b4b45a4246907d723",
+              "passed": true,
+              "policy": {
+                "absolute": "0x1.19799812dea11p-39",
+                "domain": "full",
+                "grid": "exact",
+                "identity": "db4e26fc3ee0c084c29b1023daf637722f54a8f8460c4a1d2e48f28de6ee0417",
+                "max_breakpoints": 400000,
+                "max_diagnostics": 16,
+                "relative": "0x0.0p+0",
+                "relative_floor": "0x0.0p+0",
+                "schema": "org.regressistor.waveform-policy",
+                "version": 1
+              },
+              "schema": "org.regressistor.waveform-comparison",
+              "scope": "samples",
+              "status": "pass",
+              "value_unit": "V",
+              "version": 1
+            },
+            "real": {
+              "axis_unit": "Hz",
+              "baseline_id": "9ef6ebe21914b44e6c4d3312ac3459eaecfaa9c2bb06b19e5b1171da37ea029e",
+              "candidate_id": "82669cd7f8eed72ce3a879dc5faafeecd8a37b4f6d88544ab2566375235d4429",
+              "diagnostics": [],
+              "diagnostics_truncated": false,
+              "domain": [
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                },
+                {
+                  "denominator": "0x1",
+                  "numerator": "0xfa0"
+                }
+              ],
+              "evaluated_breakpoints": 81,
+              "excluded_baseline": [
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                },
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                }
+              ],
+              "excluded_candidate": [
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                },
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                }
+              ],
+              "failing_breakpoints": 0,
+              "full_domain_covered": true,
+              "identity": "63b3fdea5275d4994dc43b21f4e33c64d08f385f3579724f277109392be259bf",
+              "maximum_deviation": {
+                "allowed": {
+                  "denominator": "0x80000000000000000000000",
+                  "numerator": "0x119799812dea11"
+                },
+                "axis": {
+                  "denominator": "0x1",
+                  "numerator": "0x32"
+                },
+                "baseline": {
+                  "denominator": "0x10000000000000",
+                  "numerator": "0xe900e3f67f12f"
+                },
+                "candidate": {
+                  "denominator": "0x20000000000000",
+                  "numerator": "0x1d201c7ecfe25d"
+                },
+                "deviation": {
+                  "denominator": "0x20000000000000",
+                  "numerator": "0x1"
+                },
+                "excess": {
+                  "denominator": "0x80000000000000000000000",
+                  "numerator": "-0x119759812dea11"
+                }
+              },
+              "maximum_excess": {
+                "allowed": {
+                  "denominator": "0x80000000000000000000000",
+                  "numerator": "0x119799812dea11"
+                },
+                "axis": {
+                  "denominator": "0x1",
+                  "numerator": "0x32"
+                },
+                "baseline": {
+                  "denominator": "0x10000000000000",
+                  "numerator": "0xe900e3f67f12f"
+                },
+                "candidate": {
+                  "denominator": "0x20000000000000",
+                  "numerator": "0x1d201c7ecfe25d"
+                },
+                "deviation": {
+                  "denominator": "0x20000000000000",
+                  "numerator": "0x1"
+                },
+                "excess": {
+                  "denominator": "0x80000000000000000000000",
+                  "numerator": "-0x119759812dea11"
+                }
+              },
+              "observations_sha256": "438b650e5fd467843c16b1234fec9f45966cf7b57d14c852bd2aabdb7cf4935b",
+              "passed": true,
+              "policy": {
+                "absolute": "0x1.19799812dea11p-39",
+                "domain": "full",
+                "grid": "exact",
+                "identity": "db4e26fc3ee0c084c29b1023daf637722f54a8f8460c4a1d2e48f28de6ee0417",
+                "max_breakpoints": 400000,
+                "max_diagnostics": 16,
+                "relative": "0x0.0p+0",
+                "relative_floor": "0x0.0p+0",
+                "schema": "org.regressistor.waveform-policy",
+                "version": 1
+              },
+              "schema": "org.regressistor.waveform-comparison",
+              "scope": "samples",
+              "status": "pass",
+              "value_unit": "V",
+              "version": 1
+            }
+          },
+          "boundary": {
+            "points": 81,
+            "raw_sha256": "d385afe03a06435d1970c4f18aeb890ffb555b8b0a85f0fb41bc1666b0a267aa",
+            "spicetrellis_wire_sha256": "153fe2ea54935af9c91de38c7984f726bc7db5fe7e61f9034ec8970294cb958c",
+            "waveform_identities": {
+              "imaginary": "ca949f1b8be10b2fc54ce7429d479404364e6fc3a701b1a9f74e4cac0d6cbe85",
+              "real": "82669cd7f8eed72ce3a879dc5faafeecd8a37b4f6d88544ab2566375235d4429"
+            }
+          }
+        },
+        "transient": {
+          "analytic_checks": {
+            "real": {
+              "axis_unit": "s",
+              "baseline_id": "70146c6bcff6ca7de04195eb5990630da8bc441dfe00039ba4a78e7fce193fdc",
+              "candidate_id": "eba6808cca9fb0d6e16711f1200fa0237c9fa864eee146f858f84bdaa61dc785",
+              "diagnostics": [],
+              "diagnostics_truncated": false,
+              "domain": [
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                },
+                {
+                  "denominator": "0x800000000000000",
+                  "numerator": "0xc49ba5e353f7d"
+                }
+              ],
+              "evaluated_breakpoints": 189,
+              "excluded_baseline": [
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                },
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                }
+              ],
+              "excluded_candidate": [
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                },
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                }
+              ],
+              "failing_breakpoints": 0,
+              "full_domain_covered": true,
+              "identity": "4d44ef09126fb3275eabfe19f17832f8c747cde1511dfd9ed1a7745cbaa20814",
+              "maximum_deviation": {
+                "allowed": {
+                  "denominator": "0x2000000000000000",
+                  "numerator": "0x4189374bc6a7f"
+                },
+                "axis": {
+                  "denominator": "0x1000000000000000",
+                  "numerator": "0xad7757c1aaa77"
+                },
+                "baseline": {
+                  "denominator": "0x20000000000000",
+                  "numerator": "0x19cde654d2eccf"
+                },
+                "candidate": {
+                  "denominator": "0x8000000000000",
+                  "numerator": "0x6738e9e161753"
+                },
+                "deviation": {
+                  "denominator": "0x20000000000000",
+                  "numerator": "0x542385707d"
+                },
+                "excess": {
+                  "denominator": "0x2000000000000000",
+                  "numerator": "-0x3c46fef4bed7f"
+                }
+              },
+              "maximum_excess": {
+                "allowed": {
+                  "denominator": "0x2000000000000000",
+                  "numerator": "0x4189374bc6a7f"
+                },
+                "axis": {
+                  "denominator": "0x1000000000000000",
+                  "numerator": "0xad7757c1aaa77"
+                },
+                "baseline": {
+                  "denominator": "0x20000000000000",
+                  "numerator": "0x19cde654d2eccf"
+                },
+                "candidate": {
+                  "denominator": "0x8000000000000",
+                  "numerator": "0x6738e9e161753"
+                },
+                "deviation": {
+                  "denominator": "0x20000000000000",
+                  "numerator": "0x542385707d"
+                },
+                "excess": {
+                  "denominator": "0x2000000000000000",
+                  "numerator": "-0x3c46fef4bed7f"
+                }
+              },
+              "observations_sha256": "937b6cfee60506922ad0e5fe53f9d66dbdd272a01145b6d6cdf2747590e4ba28",
+              "passed": true,
+              "policy": {
+                "absolute": "0x1.0624dd2f1a9fcp-11",
+                "domain": "full",
+                "grid": "exact",
+                "identity": "b98baca50e42a3f91dd7ee77fdd5a14b8df0976e70486a602d92e9b47dd630f9",
+                "max_breakpoints": 400000,
+                "max_diagnostics": 16,
+                "relative": "0x0.0p+0",
+                "relative_floor": "0x0.0p+0",
+                "schema": "org.regressistor.waveform-policy",
+                "version": 1
+              },
+              "schema": "org.regressistor.waveform-comparison",
+              "scope": "samples",
+              "status": "pass",
+              "value_unit": "V",
+              "version": 1
+            }
+          },
+          "boundary": {
+            "points": 189,
+            "raw_sha256": "95ff863d15e0925dcd8580ee6ba4285b98774e181b58f16846ffa9f06d88e4f2",
+            "spicetrellis_wire_sha256": "83d07f0dd376e78629319c816695749ae72728bbc24c655a1a48c8376b5adfc5",
+            "waveform_identities": {
+              "real": "eba6808cca9fb0d6e16711f1200fa0237c9fa864eee146f858f84bdaa61dc785"
+            }
+          }
+        }
+      },
+      "deck_sha256": "b64d5629f6e25dfd5e01f97f284058cd2b997be7bd3f7ec766e1c252b3d47f26",
+      "process": {
+        "arguments": [
+          "-n",
+          "-b",
+          "-o",
+          "ngspice.log",
+          "experiment.cir"
+        ],
+        "files": {
+          "ac.raw": {
+            "bytes": 8161,
+            "sha256": "d385afe03a06435d1970c4f18aeb890ffb555b8b0a85f0fb41bc1666b0a267aa"
+          },
+          "ngspice.log": {
+            "bytes": 742,
+            "sha256": "59a930643f5665fe1651d2e6a31de1806265885deab5adeb894c108c1c7721d6"
+          },
+          "stderr.txt": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stdout.txt": {
+            "bytes": 522,
+            "sha256": "4b20cd0bcbba68cfacf776b6a8a2c9514b0530a88145bc95807001c649dac3df"
+          },
+          "transient.raw": {
+            "bytes": 10325,
+            "sha256": "95ff863d15e0925dcd8580ee6ba4285b98774e181b58f16846ffa9f06d88e4f2"
+          }
+        },
+        "returncode": 0,
+        "wall_seconds": 0.07799999999951979
+      }
+    },
+    "nominal-fine": {
+      "analyses": {
+        "ac": {
+          "analytic_checks": {
+            "imaginary": {
+              "axis_unit": "Hz",
+              "baseline_id": "f84da85ad318862cff41015e0c63e19664d2f3bbe38767d57a42debe2276a203",
+              "candidate_id": "831ae40010420377ac27caf8caa54d0c6a6330224c133718a78e9f1f86078849",
+              "diagnostics": [],
+              "diagnostics_truncated": false,
+              "domain": [
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                },
+                {
+                  "denominator": "0x1",
+                  "numerator": "0xfa0"
+                }
+              ],
+              "evaluated_breakpoints": 161,
+              "excluded_baseline": [
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                },
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                }
+              ],
+              "excluded_candidate": [
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                },
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                }
+              ],
+              "failing_breakpoints": 0,
+              "full_domain_covered": true,
+              "identity": "f89ab6b78f84d5b674b848fdd94774c5afab0247a0ee6f78280f0e180136fca7",
+              "maximum_deviation": {
+                "allowed": {
+                  "denominator": "0x80000000000000000000000",
+                  "numerator": "0x119799812dea11"
+                },
+                "axis": {
+                  "denominator": "0x1",
+                  "numerator": "0x64"
+                },
+                "baseline": {
+                  "denominator": "0x10000000000000",
+                  "numerator": "-0x73527a03dc05b"
+                },
+                "candidate": {
+                  "denominator": "0x20000000000000",
+                  "numerator": "-0xe6a4f407b80b7"
+                },
+                "deviation": {
+                  "denominator": "0x20000000000000",
+                  "numerator": "0x1"
+                },
+                "excess": {
+                  "denominator": "0x80000000000000000000000",
+                  "numerator": "-0x119759812dea11"
+                }
+              },
+              "maximum_excess": {
+                "allowed": {
+                  "denominator": "0x80000000000000000000000",
+                  "numerator": "0x119799812dea11"
+                },
+                "axis": {
+                  "denominator": "0x1",
+                  "numerator": "0x64"
+                },
+                "baseline": {
+                  "denominator": "0x10000000000000",
+                  "numerator": "-0x73527a03dc05b"
+                },
+                "candidate": {
+                  "denominator": "0x20000000000000",
+                  "numerator": "-0xe6a4f407b80b7"
+                },
+                "deviation": {
+                  "denominator": "0x20000000000000",
+                  "numerator": "0x1"
+                },
+                "excess": {
+                  "denominator": "0x80000000000000000000000",
+                  "numerator": "-0x119759812dea11"
+                }
+              },
+              "observations_sha256": "2f5da615da2ff02a06cf0af8a8f4c34c67893da40ee43f738392c47db5292520",
+              "passed": true,
+              "policy": {
+                "absolute": "0x1.19799812dea11p-39",
+                "domain": "full",
+                "grid": "exact",
+                "identity": "db4e26fc3ee0c084c29b1023daf637722f54a8f8460c4a1d2e48f28de6ee0417",
+                "max_breakpoints": 400000,
+                "max_diagnostics": 16,
+                "relative": "0x0.0p+0",
+                "relative_floor": "0x0.0p+0",
+                "schema": "org.regressistor.waveform-policy",
+                "version": 1
+              },
+              "schema": "org.regressistor.waveform-comparison",
+              "scope": "samples",
+              "status": "pass",
+              "value_unit": "V",
+              "version": 1
+            },
+            "real": {
+              "axis_unit": "Hz",
+              "baseline_id": "204a3b7527c7a400990bdae007fab629dba762cbbcaf5e730d4981ec4930121f",
+              "candidate_id": "3ec1451c38cce6d1b8d54134b2f7c4fb8614b5e86e42153bdf02c583d53f9652",
+              "diagnostics": [],
+              "diagnostics_truncated": false,
+              "domain": [
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                },
+                {
+                  "denominator": "0x1",
+                  "numerator": "0xfa0"
+                }
+              ],
+              "evaluated_breakpoints": 161,
+              "excluded_baseline": [
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                },
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                }
+              ],
+              "excluded_candidate": [
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                },
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                }
+              ],
+              "failing_breakpoints": 0,
+              "full_domain_covered": true,
+              "identity": "a6b0f440c58e31325b836bf24d112f4ef5a14fe204063d597c6e4b1d8a8fb426",
+              "maximum_deviation": {
+                "allowed": {
+                  "denominator": "0x80000000000000000000000",
+                  "numerator": "0x119799812dea11"
+                },
+                "axis": {
+                  "denominator": "0x1",
+                  "numerator": "0x19"
+                },
+                "baseline": {
+                  "denominator": "0x20000000000000",
+                  "numerator": "0x1f3abcdd5cd3fb"
+                },
+                "candidate": {
+                  "denominator": "0x8000000000000",
+                  "numerator": "0x7ceaf375734ff"
+                },
+                "deviation": {
+                  "denominator": "0x20000000000000",
+                  "numerator": "0x1"
+                },
+                "excess": {
+                  "denominator": "0x80000000000000000000000",
+                  "numerator": "-0x119759812dea11"
+                }
+              },
+              "maximum_excess": {
+                "allowed": {
+                  "denominator": "0x80000000000000000000000",
+                  "numerator": "0x119799812dea11"
+                },
+                "axis": {
+                  "denominator": "0x1",
+                  "numerator": "0x19"
+                },
+                "baseline": {
+                  "denominator": "0x20000000000000",
+                  "numerator": "0x1f3abcdd5cd3fb"
+                },
+                "candidate": {
+                  "denominator": "0x8000000000000",
+                  "numerator": "0x7ceaf375734ff"
+                },
+                "deviation": {
+                  "denominator": "0x20000000000000",
+                  "numerator": "0x1"
+                },
+                "excess": {
+                  "denominator": "0x80000000000000000000000",
+                  "numerator": "-0x119759812dea11"
+                }
+              },
+              "observations_sha256": "98841704ea006f8339cbb2928d63ec777c6be097238c2edd52dce5b85069e2c0",
+              "passed": true,
+              "policy": {
+                "absolute": "0x1.19799812dea11p-39",
+                "domain": "full",
+                "grid": "exact",
+                "identity": "db4e26fc3ee0c084c29b1023daf637722f54a8f8460c4a1d2e48f28de6ee0417",
+                "max_breakpoints": 400000,
+                "max_diagnostics": 16,
+                "relative": "0x0.0p+0",
+                "relative_floor": "0x0.0p+0",
+                "schema": "org.regressistor.waveform-policy",
+                "version": 1
+              },
+              "schema": "org.regressistor.waveform-comparison",
+              "scope": "samples",
+              "status": "pass",
+              "value_unit": "V",
+              "version": 1
+            }
+          },
+          "boundary": {
+            "points": 161,
+            "raw_sha256": "5a6ae990686f0918b0d86d62be97c59a3b473fa08b2faebd162556ed5aacd29b",
+            "spicetrellis_wire_sha256": "f18dfae1a8ad25723c4c5ec632531b5373709859359e2f15161ab2088079b910",
+            "waveform_identities": {
+              "imaginary": "831ae40010420377ac27caf8caa54d0c6a6330224c133718a78e9f1f86078849",
+              "real": "3ec1451c38cce6d1b8d54134b2f7c4fb8614b5e86e42153bdf02c583d53f9652"
+            }
+          }
+        },
+        "transient": {
+          "analytic_checks": {
+            "real": {
+              "axis_unit": "s",
+              "baseline_id": "5223c486200675262e83abfc455b40da68046dd3311ead973c95f045cb9813c3",
+              "candidate_id": "843710f182c9d30c2bcc0282fac3a2ea5254a13f43ccbbab986615f208ed280d",
+              "diagnostics": [],
+              "diagnostics_truncated": false,
+              "domain": [
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                },
+                {
+                  "denominator": "0x800000000000000",
+                  "numerator": "0xc49ba5e353f7d"
+                }
+              ],
+              "evaluated_breakpoints": 1249,
+              "excluded_baseline": [
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                },
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                }
+              ],
+              "excluded_candidate": [
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                },
+                {
+                  "denominator": "0x1",
+                  "numerator": "0x0"
+                }
+              ],
+              "failing_breakpoints": 0,
+              "full_domain_covered": true,
+              "identity": "e395a6bd12dccd62e4417518d312e44ca19dd1b6b80d0362b8a61ab9a08b64ac",
+              "maximum_deviation": {
+                "allowed": {
+                  "denominator": "0x2000000000000000",
+                  "numerator": "0x4189374bc6a7f"
+                },
+                "axis": {
+                  "denominator": "0x2000000000000000",
+                  "numerator": "0x10b7fa4fc9d339"
+                },
+                "baseline": {
+                  "denominator": "0x1000000000000",
+                  "numerator": "0xa5239f9baf7b"
+                },
+                "candidate": {
+                  "denominator": "0x20000000000000",
+                  "numerator": "0x14a4757fb96b19"
+                },
+                "deviation": {
+                  "denominator": "0x20000000000000",
+                  "numerator": "0x18c437bb9"
+                },
+                "excess": {
+                  "denominator": "0x2000000000000000",
+                  "numerator": "-0x417073140b17f"
+                }
+              },
+              "maximum_excess": {
+                "allowed": {
+                  "denominator": "0x2000000000000000",
+                  "numerator": "0x4189374bc6a7f"
+                },
+                "axis": {
+                  "denominator": "0x2000000000000000",
+                  "numerator": "0x10b7fa4fc9d339"
+                },
+                "baseline": {
+                  "denominator": "0x1000000000000",
+                  "numerator": "0xa5239f9baf7b"
+                },
+                "candidate": {
+                  "denominator": "0x20000000000000",
+                  "numerator": "0x14a4757fb96b19"
+                },
+                "deviation": {
+                  "denominator": "0x20000000000000",
+                  "numerator": "0x18c437bb9"
+                },
+                "excess": {
+                  "denominator": "0x2000000000000000",
+                  "numerator": "-0x417073140b17f"
+                }
+              },
+              "observations_sha256": "225b155a80d269925eec974939a241e11b29c4c7945db219555eddfe5ecd9bf3",
+              "passed": true,
+              "policy": {
+                "absolute": "0x1.0624dd2f1a9fcp-11",
+                "domain": "full",
+                "grid": "exact",
+                "identity": "b98baca50e42a3f91dd7ee77fdd5a14b8df0976e70486a602d92e9b47dd630f9",
+                "max_breakpoints": 400000,
+                "max_diagnostics": 16,
+                "relative": "0x0.0p+0",
+                "relative_floor": "0x0.0p+0",
+                "schema": "org.regressistor.waveform-policy",
+                "version": 1
+              },
+              "schema": "org.regressistor.waveform-comparison",
+              "scope": "samples",
+              "status": "pass",
+              "value_unit": "V",
+              "version": 1
+            }
+          },
+          "boundary": {
+            "points": 1249,
+            "raw_sha256": "4009a523b53cad40bb2d97e9cb756abd51589b9af602996833e7bb53c45711e7",
+            "spicetrellis_wire_sha256": "a04eb6a6aebf29c3fa7d899d7a9347c6acf2028964b3035cd971644bf96ccdd4",
+            "waveform_identities": {
+              "real": "843710f182c9d30c2bcc0282fac3a2ea5254a13f43ccbbab986615f208ed280d"
+            }
+          }
+        }
+      },
+      "deck_sha256": "63b057717960fc9ec1fefa2aba24253eb84f3490e70513dd8c399dca193e425c",
+      "process": {
+        "arguments": [
+          "-n",
+          "-b",
+          "-o",
+          "ngspice.log",
+          "experiment.cir"
+        ],
+        "files": {
+          "ac.raw": {
+            "bytes": 16061,
+            "sha256": "5a6ae990686f0918b0d86d62be97c59a3b473fa08b2faebd162556ed5aacd29b"
+          },
+          "ngspice.log": {
+            "bytes": 742,
+            "sha256": "c1acfafa6b5eea14fa55966bb3a8f0a1ed2d0ba6e128488498a2546c969f7412"
+          },
+          "stderr.txt": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "stdout.txt": {
+            "bytes": 522,
+            "sha256": "4b20cd0bcbba68cfacf776b6a8a2c9514b0530a88145bc95807001c649dac3df"
+          },
+          "transient.raw": {
+            "bytes": 67813,
+            "sha256": "4009a523b53cad40bb2d97e9cb756abd51589b9af602996833e7bb53c45711e7"
+          }
+        },
+        "returncode": 0,
+        "wall_seconds": 0.06199999999989814
+      }
+    }
+  },
+  "comparisons": {
+    "changed-resistance/ac/imaginary": {
+      "axis_unit": "Hz",
+      "baseline_id": "ca949f1b8be10b2fc54ce7429d479404364e6fc3a701b1a9f74e4cac0d6cbe85",
+      "candidate_id": "57ae20f0fa6927a19b387130e54a3a10f9db7db5c42e3cecfacf1156c4945206",
+      "diagnostics": [
+        {
+          "allowed": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x3d70a3d70a3d7"
+          },
+          "axis": {
+            "denominator": "0x1",
+            "numerator": "0x19"
+          },
+          "baseline": {
+            "denominator": "0x80000000000000",
+            "numerator": "-0x124cd01a6c07ff"
+          },
+          "candidate": {
+            "denominator": "0x40000000000000",
+            "numerator": "-0x124cd01a6c07ff"
+          },
+          "deviation": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x124cd01a6c07ff"
+          },
+          "excess": {
+            "denominator": "0x10000000000000",
+            "numerator": "0x1ceb8bb9f6c85"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x3d70a3d70a3d7"
+          },
+          "axis": {
+            "denominator": "0x1",
+            "numerator": "0x32"
+          },
+          "baseline": {
+            "denominator": "0x40000000000000",
+            "numerator": "-0x124cd01a6c07ff"
+          },
+          "candidate": {
+            "denominator": "0x20000000000000",
+            "numerator": "-0xe6a4f407b80b7"
+          },
+          "deviation": {
+            "denominator": "0x40000000000000",
+            "numerator": "0xa87ce668af96f"
+          },
+          "excess": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x1138928fa54f07"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x3d70a3d70a3d7"
+          },
+          "axis": {
+            "denominator": "0x1",
+            "numerator": "0x4b"
+          },
+          "baseline": {
+            "denominator": "0x80000000000000",
+            "numerator": "-0x2f216e9b63096d"
+          },
+          "candidate": {
+            "denominator": "0x40000000000000",
+            "numerator": "-0x1ff1a52999b969"
+          },
+          "deviation": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x10c1dbb7d06965"
+          },
+          "excess": {
+            "denominator": "0x40000000000000",
+            "numerator": "0x67568bd2fe2c7"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x3d70a3d70a3d7"
+          },
+          "axis": {
+            "denominator": "0x1",
+            "numerator": "0x64"
+          },
+          "baseline": {
+            "denominator": "0x20000000000000",
+            "numerator": "-0xe6a4f407b80b7"
+          },
+          "candidate": {
+            "denominator": "0x40000000000000",
+            "numerator": "-0x1f2ecdb4db5d07"
+          },
+          "deviation": {
+            "denominator": "0x40000000000000",
+            "numerator": "0x25a2f33e45b99"
+          },
+          "excess": {
+            "denominator": "0x80000000000000",
+            "numerator": "0xdd542a58135b"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x3d70a3d70a3d7"
+          },
+          "axis": {
+            "denominator": "0x1",
+            "numerator": "0x96"
+          },
+          "baseline": {
+            "denominator": "0x40000000000000",
+            "numerator": "-0x1ff1a52999b969"
+          },
+          "candidate": {
+            "denominator": "0x40000000000000",
+            "numerator": "-0x1a7ef06a69f693"
+          },
+          "deviation": {
+            "denominator": "0x20000000000000",
+            "numerator": "0x2b95a5f97e16b"
+          },
+          "excess": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x70e5f40eee1d5"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x3d70a3d70a3d7"
+          },
+          "axis": {
+            "denominator": "0x1",
+            "numerator": "0xaf"
+          },
+          "baseline": {
+            "denominator": "0x8000000000000",
+            "numerator": "-0x3f2072de75167"
+          },
+          "candidate": {
+            "denominator": "0x40000000000000",
+            "numerator": "-0x181db018af4c53"
+          },
+          "deviation": {
+            "denominator": "0x40000000000000",
+            "numerator": "0x77289568b3ee5"
+          },
+          "excess": {
+            "denominator": "0x80000000000000",
+            "numerator": "0xb0e086fa5d9f3"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x3d70a3d70a3d7"
+          },
+          "axis": {
+            "denominator": "0x1",
+            "numerator": "0xc8"
+          },
+          "baseline": {
+            "denominator": "0x40000000000000",
+            "numerator": "-0x1f2ecdb4db5d07"
+          },
+          "candidate": {
+            "denominator": "0x20000000000000",
+            "numerator": "-0xafdff42c1498f"
+          },
+          "deviation": {
+            "denominator": "0x40000000000000",
+            "numerator": "0x932cf2f58c9e9"
+          },
+          "excess": {
+            "denominator": "0x80000000000000",
+            "numerator": "0xe8e942140effb"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x3d70a3d70a3d7"
+          },
+          "axis": {
+            "denominator": "0x1",
+            "numerator": "0xe1"
+          },
+          "baseline": {
+            "denominator": "0x40000000000000",
+            "numerator": "-0x1e168731632e6b"
+          },
+          "candidate": {
+            "denominator": "0x40000000000000",
+            "numerator": "-0x141e66dbde664d"
+          },
+          "deviation": {
+            "denominator": "0x20000000000000",
+            "numerator": "0x4fc102ac2640f"
+          },
+          "excess": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x1019366d98ec65"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x3d70a3d70a3d7"
+          },
+          "axis": {
+            "denominator": "0x1",
+            "numerator": "0xfa"
+          },
+          "baseline": {
+            "denominator": "0x40000000000000",
+            "numerator": "-0x1cfe40adeaffcf"
+          },
+          "candidate": {
+            "denominator": "0x40000000000000",
+            "numerator": "-0x127f64bc76ba85"
+          },
+          "deviation": {
+            "denominator": "0x20000000000000",
+            "numerator": "0x53f6df8ba22a5"
+          },
+          "excess": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x1126ada577e6bd"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x3d70a3d70a3d7"
+          },
+          "axis": {
+            "denominator": "0x1",
+            "numerator": "0x113"
+          },
+          "baseline": {
+            "denominator": "0x40000000000000",
+            "numerator": "-0x1bbe988c2a7b31"
+          },
+          "candidate": {
+            "denominator": "0x10000000000000",
+            "numerator": "-0x445b047c65abf"
+          },
+          "deviation": {
+            "denominator": "0x40000000000000",
+            "numerator": "0xaa7d76d111035"
+          },
+          "excess": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x1178a49cb17c93"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x3d70a3d70a3d7"
+          },
+          "axis": {
+            "denominator": "0x1",
+            "numerator": "0x12c"
+          },
+          "baseline": {
+            "denominator": "0x40000000000000",
+            "numerator": "-0x1a7ef06a69f693"
+          },
+          "candidate": {
+            "denominator": "0x20000000000000",
+            "numerator": "-0x7ee2673554613"
+          },
+          "deviation": {
+            "denominator": "0x40000000000000",
+            "numerator": "0xaa2a383bf6a6d"
+          },
+          "excess": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x116e3cca0e3103"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x3d70a3d70a3d7"
+          },
+          "axis": {
+            "denominator": "0x1",
+            "numerator": "0x145"
+          },
+          "baseline": {
+            "denominator": "0x40000000000000",
+            "numerator": "-0x194e50418ca173"
+          },
+          "candidate": {
+            "denominator": "0x80000000000000",
+            "numerator": "-0x1d918c500b0aff"
+          },
+          "deviation": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x150b14330e37e7"
+          },
+          "excess": {
+            "denominator": "0x8000000000000",
+            "numerator": "0x113409f59d941"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x3d70a3d70a3d7"
+          },
+          "axis": {
+            "denominator": "0x1",
+            "numerator": "0x15e"
+          },
+          "baseline": {
+            "denominator": "0x40000000000000",
+            "numerator": "-0x181db018af4c53"
+          },
+          "candidate": {
+            "denominator": "0x20000000000000",
+            "numerator": "-0x6eb040ca9b5f7"
+          },
+          "deviation": {
+            "denominator": "0x40000000000000",
+            "numerator": "0xa47a7ff5be065"
+          },
+          "excess": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x10b845c1471cf3"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x3d70a3d70a3d7"
+          },
+          "axis": {
+            "denominator": "0x1",
+            "numerator": "0x177"
+          },
+          "baseline": {
+            "denominator": "0x80000000000000",
+            "numerator": "-0x2e19ae9e31df71"
+          },
+          "candidate": {
+            "denominator": "0x80000000000000",
+            "numerator": "-0x19fdf28a2dcdeb"
+          },
+          "deviation": {
+            "denominator": "0x40000000000000",
+            "numerator": "0xa0dde0a0208c3"
+          },
+          "excess": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x1044b1d6936daf"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x3d70a3d70a3d7"
+          },
+          "axis": {
+            "denominator": "0x1",
+            "numerator": "0x190"
+          },
+          "baseline": {
+            "denominator": "0x20000000000000",
+            "numerator": "-0xafdff42c1498f"
+          },
+          "candidate": {
+            "denominator": "0x40000000000000",
+            "numerator": "-0xc3f6609d679d1"
+          },
+          "deviation": {
+            "denominator": "0x40000000000000",
+            "numerator": "0x9bc987bac194d"
+          },
+          "excess": {
+            "denominator": "0x80000000000000",
+            "numerator": "0xfa226b9e78ec3"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x3d70a3d70a3d7"
+          },
+          "axis": {
+            "denominator": "0x1",
+            "numerator": "0x1a9"
+          },
+          "baseline": {
+            "denominator": "0x80000000000000",
+            "numerator": "-0x2a1a656160f96b"
+          },
+          "candidate": {
+            "denominator": "0x20000000000000",
+            "numerator": "-0x5c9ec8e71f7d9"
+          },
+          "deviation": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x12f2b327991a07"
+          },
+          "excess": {
+            "denominator": "0x8000000000000",
+            "numerator": "0xf1ba8ea28763"
+          }
+        }
+      ],
+      "diagnostics_truncated": true,
+      "domain": [
+        {
+          "denominator": "0x1",
+          "numerator": "0x0"
+        },
+        {
+          "denominator": "0x1",
+          "numerator": "0xfa0"
+        }
+      ],
+      "evaluated_breakpoints": 161,
+      "excluded_baseline": [
+        {
+          "denominator": "0x1",
+          "numerator": "0x0"
+        },
+        {
+          "denominator": "0x1",
+          "numerator": "0x0"
+        }
+      ],
+      "excluded_candidate": [
+        {
+          "denominator": "0x1",
+          "numerator": "0x0"
+        },
+        {
+          "denominator": "0x1",
+          "numerator": "0x0"
+        }
+      ],
+      "failing_breakpoints": 104,
+      "full_domain_covered": true,
+      "identity": "2ca8cf1b0633938243c8249d0d56d2b3b1cd93c2841e5356e4cb91c59e0b2807",
+      "maximum_deviation": {
+        "allowed": {
+          "denominator": "0x80000000000000",
+          "numerator": "0x3d70a3d70a3d7"
+        },
+        "axis": {
+          "denominator": "0x1",
+          "numerator": "0x113"
+        },
+        "baseline": {
+          "denominator": "0x40000000000000",
+          "numerator": "-0x1bbe988c2a7b31"
+        },
+        "candidate": {
+          "denominator": "0x10000000000000",
+          "numerator": "-0x445b047c65abf"
+        },
+        "deviation": {
+          "denominator": "0x40000000000000",
+          "numerator": "0xaa7d76d111035"
+        },
+        "excess": {
+          "denominator": "0x80000000000000",
+          "numerator": "0x1178a49cb17c93"
+        }
+      },
+      "maximum_excess": {
+        "allowed": {
+          "denominator": "0x80000000000000",
+          "numerator": "0x3d70a3d70a3d7"
+        },
+        "axis": {
+          "denominator": "0x1",
+          "numerator": "0x113"
+        },
+        "baseline": {
+          "denominator": "0x40000000000000",
+          "numerator": "-0x1bbe988c2a7b31"
+        },
+        "candidate": {
+          "denominator": "0x10000000000000",
+          "numerator": "-0x445b047c65abf"
+        },
+        "deviation": {
+          "denominator": "0x40000000000000",
+          "numerator": "0xaa7d76d111035"
+        },
+        "excess": {
+          "denominator": "0x80000000000000",
+          "numerator": "0x1178a49cb17c93"
+        }
+      },
+      "observations_sha256": "81662f79e0b662558236ae2c48c900822e5c5dd708404bd36bebf55690efb70b",
+      "passed": false,
+      "policy": {
+        "absolute": "0x1.eb851eb851eb8p-6",
+        "domain": "full",
+        "grid": "linear",
+        "identity": "ac126d1daf1f47e886991ac38b8fd6eaa9d77c74342da95d7b69de854930ded0",
+        "max_breakpoints": 400000,
+        "max_diagnostics": 16,
+        "relative": "0x0.0p+0",
+        "relative_floor": "0x0.0p+0",
+        "schema": "org.regressistor.waveform-policy",
+        "version": 1
+      },
+      "schema": "org.regressistor.waveform-comparison",
+      "scope": "continuous_piecewise_linear",
+      "status": "fail",
+      "value_unit": "V",
+      "version": 1
+    },
+    "changed-resistance/ac/real": {
+      "axis_unit": "Hz",
+      "baseline_id": "82669cd7f8eed72ce3a879dc5faafeecd8a37b4f6d88544ab2566375235d4429",
+      "candidate_id": "fe619d2db9c1795d9da83128fd3d7b3a427e19e439ce36a90d76ef11ddd012a7",
+      "diagnostics": [
+        {
+          "allowed": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x3d70a3d70a3d7"
+          },
+          "axis": {
+            "denominator": "0x1",
+            "numerator": "0x19"
+          },
+          "baseline": {
+            "denominator": "0x40000000000000",
+            "numerator": "0x3d201c7ecfe25d"
+          },
+          "candidate": {
+            "denominator": "0x20000000000000",
+            "numerator": "0x1d201c7ecfe25d"
+          },
+          "deviation": {
+            "denominator": "0x40000000000000",
+            "numerator": "0x2dfe381301da3"
+          },
+          "excess": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x1e8bcc4ef976f"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x3d70a3d70a3d7"
+          },
+          "axis": {
+            "denominator": "0x1",
+            "numerator": "0x32"
+          },
+          "baseline": {
+            "denominator": "0x20000000000000",
+            "numerator": "0x1d201c7ecfe25d"
+          },
+          "candidate": {
+            "denominator": "0x10000000000000",
+            "numerator": "0xb78a7b1a0a4d1"
+          },
+          "deviation": {
+            "denominator": "0x20000000000000",
+            "numerator": "0x62ecd1b8e98bb"
+          },
+          "excess": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x14e42a30c9bf15"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x3d70a3d70a3d7"
+          },
+          "axis": {
+            "denominator": "0x1",
+            "numerator": "0x4b"
+          },
+          "baseline": {
+            "denominator": "0x40000000000000",
+            "numerator": "0x34116be2112bff"
+          },
+          "candidate": {
+            "denominator": "0x20000000000000",
+            "numerator": "0x10f26020fde15b"
+          },
+          "deviation": {
+            "denominator": "0x40000000000000",
+            "numerator": "0x122caba0156949"
+          },
+          "excess": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x20824d02ba2ebb"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x3d70a3d70a3d7"
+          },
+          "axis": {
+            "denominator": "0x1",
+            "numerator": "0x64"
+          },
+          "baseline": {
+            "denominator": "0x10000000000000",
+            "numerator": "0xb78a7b1a0a4d1"
+          },
+          "candidate": {
+            "denominator": "0x40000000000000",
+            "numerator": "0x18d08362254b69"
+          },
+          "deviation": {
+            "denominator": "0x40000000000000",
+            "numerator": "0x15121b645d47db"
+          },
+          "excess": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x264d2c8b49ebdf"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x3d70a3d70a3d7"
+          },
+          "axis": {
+            "denominator": "0x1",
+            "numerator": "0x7d"
+          },
+          "baseline": {
+            "denominator": "0x40000000000000",
+            "numerator": "0x27e3af843f2afd"
+          },
+          "candidate": {
+            "denominator": "0x10000000000000",
+            "numerator": "0x49d49c764455b"
+          },
+          "deviation": {
+            "denominator": "0x40000000000000",
+            "numerator": "0x156e8866ae1591"
+          },
+          "excess": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x2706068feb874b"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x3d70a3d70a3d7"
+          },
+          "axis": {
+            "denominator": "0x1",
+            "numerator": "0x96"
+          },
+          "baseline": {
+            "denominator": "0x20000000000000",
+            "numerator": "0x10f26020fde15b"
+          },
+          "candidate": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x1c1cec03ed0c4f"
+          },
+          "deviation": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x27ac94800a791d"
+          },
+          "excess": {
+            "denominator": "0x40000000000000",
+            "numerator": "0x11eac5214ceaa3"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x3d70a3d70a3d7"
+          },
+          "axis": {
+            "denominator": "0x1",
+            "numerator": "0xaf"
+          },
+          "baseline": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x3ab543a4210e1f"
+          },
+          "candidate": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x15eeb3d8fa8bab"
+          },
+          "deviation": {
+            "denominator": "0x20000000000000",
+            "numerator": "0x931a3f2c9a09d"
+          },
+          "excess": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x20ef858db5de9d"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x3d70a3d70a3d7"
+          },
+          "axis": {
+            "denominator": "0x1",
+            "numerator": "0xc8"
+          },
+          "baseline": {
+            "denominator": "0x40000000000000",
+            "numerator": "0x18d08362254b69"
+          },
+          "candidate": {
+            "denominator": "0x20000000000000",
+            "numerator": "0x45fa76465ba91"
+          },
+          "deviation": {
+            "denominator": "0x40000000000000",
+            "numerator": "0x1011349959d647"
+          },
+          "excess": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x1c4b5ef54308b7"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x3d70a3d70a3d7"
+          },
+          "axis": {
+            "denominator": "0x1",
+            "numerator": "0xe1"
+          },
+          "baseline": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x2b45aa7fb660d5"
+          },
+          "candidate": {
+            "denominator": "0x40000000000000",
+            "numerator": "0x71d94fe8f5b6f"
+          },
+          "deviation": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x1d0a808297a9f7"
+          },
+          "excess": {
+            "denominator": "0x4000000000000",
+            "numerator": "0xc99bb2293831"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x3d70a3d70a3d7"
+          },
+          "axis": {
+            "denominator": "0x1",
+            "numerator": "0xfa"
+          },
+          "baseline": {
+            "denominator": "0x10000000000000",
+            "numerator": "0x49d49c764455b"
+          },
+          "candidate": {
+            "denominator": "0x40000000000000",
+            "numerator": "0x5e35293b3b17d"
+          },
+          "deviation": {
+            "denominator": "0x40000000000000",
+            "numerator": "0xc91d489dd63ef"
+          },
+          "excess": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x154c9ed64a2407"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x3d70a3d70a3d7"
+          },
+          "axis": {
+            "denominator": "0x1",
+            "numerator": "0x113"
+          },
+          "baseline": {
+            "denominator": "0x100000000000000",
+            "numerator": "0x41073a3f0f3727"
+          },
+          "candidate": {
+            "denominator": "0x20000000000000",
+            "numerator": "0x278f79258e65d"
+          },
+          "deviation": {
+            "denominator": "0x100000000000000",
+            "numerator": "0x2d3f7dac48043f"
+          },
+          "excess": {
+            "denominator": "0x100000000000000",
+            "numerator": "0x2591693166bc91"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x3d70a3d70a3d7"
+          },
+          "axis": {
+            "denominator": "0x1",
+            "numerator": "0x12c"
+          },
+          "baseline": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x1c1cec03ed0c4f"
+          },
+          "candidate": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x86a0e671c497f"
+          },
+          "deviation": {
+            "denominator": "0x8000000000000",
+            "numerator": "0x13b2dd9cd0c2d"
+          },
+          "excess": {
+            "denominator": "0x80000000000000",
+            "numerator": "0xfdbd35f601ef9"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x3d70a3d70a3d7"
+          },
+          "axis": {
+            "denominator": "0x1",
+            "numerator": "0x145"
+          },
+          "baseline": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x1905cfee73cbfd"
+          },
+          "candidate": {
+            "denominator": "0x200000000000000",
+            "numerator": "0x1cf5baad759303"
+          },
+          "deviation": {
+            "denominator": "0x200000000000000",
+            "numerator": "0x4721850c599cf1"
+          },
+          "excess": {
+            "denominator": "0x200000000000000",
+            "numerator": "0x37c55c16970d95"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x3d70a3d70a3d7"
+          },
+          "axis": {
+            "denominator": "0x1",
+            "numerator": "0x15e"
+          },
+          "baseline": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x15eeb3d8fa8bab"
+          },
+          "candidate": {
+            "denominator": "0x40000000000000",
+            "numerator": "0x32554c9da7cc7"
+          },
+          "deviation": {
+            "denominator": "0x80000000000000",
+            "numerator": "0xfa40a4545921d"
+          },
+          "excess": {
+            "denominator": "0x40000000000000",
+            "numerator": "0x5e68003ea7723"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x3d70a3d70a3d7"
+          },
+          "axis": {
+            "denominator": "0x1",
+            "numerator": "0x177"
+          },
+          "baseline": {
+            "denominator": "0x100000000000000",
+            "numerator": "0x276d516a9175ef"
+          },
+          "candidate": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x58402f17fdab1"
+          },
+          "deviation": {
+            "denominator": "0x100000000000000",
+            "numerator": "0x1c654b8791c08d"
+          },
+          "excess": {
+            "denominator": "0x100000000000000",
+            "numerator": "0x14b7370cb078df"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x80000000000000",
+            "numerator": "0x3d70a3d70a3d7"
+          },
+          "axis": {
+            "denominator": "0x1",
+            "numerator": "0x190"
+          },
+          "baseline": {
+            "denominator": "0x20000000000000",
+            "numerator": "0x45fa76465ba91"
+          },
+          "candidate": {
+            "denominator": "0x200000000000000",
+            "numerator": "0x137e244f7bbb5f"
+          },
+          "deviation": {
+            "denominator": "0x200000000000000",
+            "numerator": "0x327c51f6dfedb1"
+          },
+          "excess": {
+            "denominator": "0x200000000000000",
+            "numerator": "0x232029011d5e55"
+          }
+        }
+      ],
+      "diagnostics_truncated": true,
+      "domain": [
+        {
+          "denominator": "0x1",
+          "numerator": "0x0"
+        },
+        {
+          "denominator": "0x1",
+          "numerator": "0xfa0"
+        }
+      ],
+      "evaluated_breakpoints": 161,
+      "excluded_baseline": [
+        {
+          "denominator": "0x1",
+          "numerator": "0x0"
+        },
+        {
+          "denominator": "0x1",
+          "numerator": "0x0"
+        }
+      ],
+      "excluded_candidate": [
+        {
+          "denominator": "0x1",
+          "numerator": "0x0"
+        },
+        {
+          "denominator": "0x1",
+          "numerator": "0x0"
+        }
+      ],
+      "failing_breakpoints": 31,
+      "full_domain_covered": true,
+      "identity": "a695819426e37754b2080855bfb4c0aab976b5b4dda8288905883488da6e9a70",
+      "maximum_deviation": {
+        "allowed": {
+          "denominator": "0x80000000000000",
+          "numerator": "0x3d70a3d70a3d7"
+        },
+        "axis": {
+          "denominator": "0x1",
+          "numerator": "0x7d"
+        },
+        "baseline": {
+          "denominator": "0x40000000000000",
+          "numerator": "0x27e3af843f2afd"
+        },
+        "candidate": {
+          "denominator": "0x10000000000000",
+          "numerator": "0x49d49c764455b"
+        },
+        "deviation": {
+          "denominator": "0x40000000000000",
+          "numerator": "0x156e8866ae1591"
+        },
+        "excess": {
+          "denominator": "0x80000000000000",
+          "numerator": "0x2706068feb874b"
+        }
+      },
+      "maximum_excess": {
+        "allowed": {
+          "denominator": "0x80000000000000",
+          "numerator": "0x3d70a3d70a3d7"
+        },
+        "axis": {
+          "denominator": "0x1",
+          "numerator": "0x7d"
+        },
+        "baseline": {
+          "denominator": "0x40000000000000",
+          "numerator": "0x27e3af843f2afd"
+        },
+        "candidate": {
+          "denominator": "0x10000000000000",
+          "numerator": "0x49d49c764455b"
+        },
+        "deviation": {
+          "denominator": "0x40000000000000",
+          "numerator": "0x156e8866ae1591"
+        },
+        "excess": {
+          "denominator": "0x80000000000000",
+          "numerator": "0x2706068feb874b"
+        }
+      },
+      "observations_sha256": "4701f960946003c5316a1aad383033576096396cae7318bae728a682d89b8c3d",
+      "passed": false,
+      "policy": {
+        "absolute": "0x1.eb851eb851eb8p-6",
+        "domain": "full",
+        "grid": "linear",
+        "identity": "ac126d1daf1f47e886991ac38b8fd6eaa9d77c74342da95d7b69de854930ded0",
+        "max_breakpoints": 400000,
+        "max_diagnostics": 16,
+        "relative": "0x0.0p+0",
+        "relative_floor": "0x0.0p+0",
+        "schema": "org.regressistor.waveform-policy",
+        "version": 1
+      },
+      "schema": "org.regressistor.waveform-comparison",
+      "scope": "continuous_piecewise_linear",
+      "status": "fail",
+      "value_unit": "V",
+      "version": 1
+    },
+    "changed-resistance/transient/real": {
+      "axis_unit": "s",
+      "baseline_id": "eba6808cca9fb0d6e16711f1200fa0237c9fa864eee146f858f84bdaa61dc785",
+      "candidate_id": "d75611a6684041dddcb3f1335f814ce86e7fe38700d1fc94b837f86e1dd03af6",
+      "diagnostics": [
+        {
+          "allowed": {
+            "denominator": "0x800000000000000",
+            "numerator": "0x4189374bc6a7f"
+          },
+          "axis": {
+            "denominator": "0x4000000000000000",
+            "numerator": "0x1088fdeab57009"
+          },
+          "baseline": {
+            "denominator": "0x5489ec47fe2000000000000000",
+            "numerator": "0x5c3157548e62e78cb734a7bf"
+          },
+          "candidate": {
+            "denominator": "0x800000000000000",
+            "numerator": "0x459716773b777"
+          },
+          "deviation": {
+            "denominator": "0x5489ec47fe2000000000000000",
+            "numerator": "0x2e3b346a8e5b5e156ca4a7a3"
+          },
+          "excess": {
+            "denominator": "0x5489ec47fe2000000000000000",
+            "numerator": "0x2f28a49cab57a8087d69d67"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x800000000000000",
+            "numerator": "0x4189374bc6a7f"
+          },
+          "axis": {
+            "denominator": "0x2000000000000000",
+            "numerator": "0x845931eaaa539"
+          },
+          "baseline": {
+            "denominator": "0x800000000000000",
+            "numerator": "0x9adf21619d74b"
+          },
+          "candidate": {
+            "denominator": "0x22b8cdeab2e000000000000000",
+            "numerator": "0x1511cccec4754ee216c80385"
+          },
+          "deviation": {
+            "denominator": "0x22b8cdeab2e000000000000000",
+            "numerator": "0x14f111f4797cb521ce338d6f"
+          },
+          "excess": {
+            "denominator": "0x22b8cdeab2e000000000000000",
+            "numerator": "0x32a0096eecc944287f39dcb"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x800000000000000",
+            "numerator": "0x4189374bc6a7f"
+          },
+          "axis": {
+            "denominator": "0x2000000000000000",
+            "numerator": "0x8461f9f01b867"
+          },
+          "baseline": {
+            "denominator": "0x1000000000000000",
+            "numerator": "0x14696289f548ed"
+          },
+          "candidate": {
+            "denominator": "0x2000000000000000",
+            "numerator": "0x14721b870925a7"
+          },
+          "deviation": {
+            "denominator": "0x2000000000000000",
+            "numerator": "0x1460a98ce16c33"
+          },
+          "excess": {
+            "denominator": "0x2000000000000000",
+            "numerator": "0x3fe5bb9efc237"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x800000000000000",
+            "numerator": "0x4189374bc6a7f"
+          },
+          "axis": {
+            "denominator": "0x4000000000000000",
+            "numerator": "0x108c405e4f2c61"
+          },
+          "baseline": {
+            "denominator": "0x6f4d5bb0c00000000000000",
+            "numerator": "0x8e05687b240a8d5e6ae61"
+          },
+          "candidate": {
+            "denominator": "0x400000000000000",
+            "numerator": "0x28e668ba250f7"
+          },
+          "deviation": {
+            "denominator": "0x1bd356ec300000000000000",
+            "numerator": "0x11b916c26ea4d2715780f"
+          },
+          "excess": {
+            "denominator": "0xde9ab761800000000000000",
+            "numerator": "0x1bcf833168dcd88190fbb"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x800000000000000",
+            "numerator": "0x4189374bc6a7f"
+          },
+          "axis": {
+            "denominator": "0x4000000000000000",
+            "numerator": "0x108c40fb38df91"
+          },
+          "baseline": {
+            "denominator": "0x400000000000000",
+            "numerator": "0x51ac4c9538987"
+          },
+          "candidate": {
+            "denominator": "0x9025ddcbc00000000000000",
+            "numerator": "0x5c214f2052e2ee0f40bc1"
+          },
+          "deviation": {
+            "denominator": "0x1204bbb9780000000000000",
+            "numerator": "0xb7a55fad5d67b91e1ea1"
+          },
+          "excess": {
+            "denominator": "0x1204bbb97800000000000000",
+            "numerator": "0x2409dcd06fd64fce053bf"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x800000000000000",
+            "numerator": "0x4189374bc6a7f"
+          },
+          "axis": {
+            "denominator": "0x400000000000000",
+            "numerator": "0x108c429ee6a39"
+          },
+          "baseline": {
+            "denominator": "0x128ce49d9000000000000000",
+            "numerator": "0x17ae1afd73d66ce8e3bf31"
+          },
+          "candidate": {
+            "denominator": "0x800000000000000",
+            "numerator": "0x51d5982447f8d"
+          },
+          "deviation": {
+            "denominator": "0x128ce49d9000000000000000",
+            "numerator": "0xbd1fdd0befb2fa9191827"
+          },
+          "excess": {
+            "denominator": "0x128ce49d9000000000000000",
+            "numerator": "0x2528ee885a31f388c1ed9"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x800000000000000",
+            "numerator": "0x4189374bc6a7f"
+          },
+          "axis": {
+            "denominator": "0x1000000000000000",
+            "numerator": "0x423111d68ef47"
+          },
+          "baseline": {
+            "denominator": "0x1000000000000000",
+            "numerator": "0x146e745ba409bd"
+          },
+          "candidate": {
+            "denominator": "0x1204bbb95400000000000000",
+            "numerator": "0xb86124a74143c17454cf3"
+          },
+          "deviation": {
+            "denominator": "0x4812eee55000000000000000",
+            "numerator": "0x2df0efc54ed03a8e65bdf5"
+          },
+          "excess": {
+            "denominator": "0x4812eee55000000000000000",
+            "numerator": "0x90a0f0e5d263e6f9ee19f"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x800000000000000",
+            "numerator": "0x4189374bc6a7f"
+          },
+          "axis": {
+            "denominator": "0x4000000000000000",
+            "numerator": "0x108c47201591e5"
+          },
+          "baseline": {
+            "denominator": "0x1bd356ec5800000000000000",
+            "numerator": "0x238cc534e99244861b993b"
+          },
+          "candidate": {
+            "denominator": "0x2000000000000000",
+            "numerator": "0x1479c9609d195b"
+          },
+          "deviation": {
+            "denominator": "0x6f4d5bb16000000000000000",
+            "numerator": "0x46fb229421252026901183"
+          },
+          "excess": {
+            "denominator": "0x6f4d5bb16000000000000000",
+            "numerator": "0xdfe8922c914bd834239af"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x800000000000000",
+            "numerator": "0x4189374bc6a7f"
+          },
+          "axis": {
+            "denominator": "0x2000000000000000",
+            "numerator": "0x84625b53cbc19"
+          },
+          "baseline": {
+            "denominator": "0x1000000000000000",
+            "numerator": "0x147536c628c8fb"
+          },
+          "candidate": {
+            "denominator": "0x4812eee55000000000000000",
+            "numerator": "0x2e278c5b2762b8c0026c07"
+          },
+          "deviation": {
+            "denominator": "0x4812eee5500000000000000",
+            "numerator": "0x2e001f72f1c1378e7ba95"
+          },
+          "excess": {
+            "denominator": "0x24097772a800000000000000",
+            "numerator": "0x48c9f5e000b9db7da667d"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x800000000000000",
+            "numerator": "0x4189374bc6a7f"
+          },
+          "axis": {
+            "denominator": "0x4000000000000000",
+            "numerator": "0x108c5022736e8f"
+          },
+          "baseline": {
+            "denominator": "0xde9ab7627000000000000000",
+            "numerator": "0x11cdff4fa2de5725b62473d"
+          },
+          "candidate": {
+            "denominator": "0x2000000000000000",
+            "numerator": "0x1482900de408c1"
+          },
+          "deviation": {
+            "denominator": "0x1bd356ec4e000000000000000",
+            "numerator": "0x11c6607759b3b74fb134313"
+          },
+          "excess": {
+            "denominator": "0x1bd356ec4e000000000000000",
+            "numerator": "0x3873a1b08ce56f8c9435af"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x800000000000000",
+            "numerator": "0x4189374bc6a7f"
+          },
+          "axis": {
+            "denominator": "0x4000000000000000",
+            "numerator": "0x108c595424ee59"
+          },
+          "baseline": {
+            "denominator": "0x1000000000000000",
+            "numerator": "0x1482bb92962bfb"
+          },
+          "candidate": {
+            "denominator": "0x24097772aa000000000000000",
+            "numerator": "0x172309598e6bfae96a234eb"
+          },
+          "deviation": {
+            "denominator": "0x24097772aa000000000000000",
+            "numerator": "0x170f3f5916632cde559c5c3"
+          },
+          "excess": {
+            "denominator": "0x24097772aa000000000000000",
+            "numerator": "0x49bcefd9c8809f1c313917"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x800000000000000",
+            "numerator": "0x4189374bc6a7f"
+          },
+          "axis": {
+            "denominator": "0x1000000000000000",
+            "numerator": "0x4231889cbc9f9"
+          },
+          "baseline": {
+            "denominator": "0xde9ab7629800000000000000",
+            "numerator": "0x11dd38abf1b85025dfc2833"
+          },
+          "candidate": {
+            "denominator": "0x200000000000000",
+            "numerator": "0x14941d6134ce5"
+          },
+          "deviation": {
+            "denominator": "0xde9ab7629800000000000000",
+            "numerator": "0x8eac8030ea022b41afff37"
+          },
+          "excess": {
+            "denominator": "0x6f4d5bb14c00000000000000",
+            "numerator": "0xe59a6a7272e23a1613205"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x800000000000000",
+            "numerator": "0x4189374bc6a7f"
+          },
+          "axis": {
+            "denominator": "0x1000000000000000",
+            "numerator": "0x4231d49def6ab"
+          },
+          "baseline": {
+            "denominator": "0x800000000000000",
+            "numerator": "0xa4ee284805455"
+          },
+          "candidate": {
+            "denominator": "0x4812eee55000000000000000",
+            "numerator": "0x2e831f3813668374e5b3f9"
+          },
+          "deviation": {
+            "denominator": "0x4812eee55000000000000000",
+            "numerator": "0x2e5b3cc065c00b1dac5879"
+          },
+          "excess": {
+            "denominator": "0x4812eee55000000000000000",
+            "numerator": "0x9745c0974160efee57c23"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x800000000000000",
+            "numerator": "0x4189374bc6a7f"
+          },
+          "axis": {
+            "denominator": "0x1000000000000000",
+            "numerator": "0x423218c29a6a3"
+          },
+          "baseline": {
+            "denominator": "0x1bd356ec52800000000000000",
+            "numerator": "0x23f7565827a9a8af3048b49"
+          },
+          "candidate": {
+            "denominator": "0x1000000000000000",
+            "numerator": "0xa5b9bf5710441"
+          },
+          "deviation": {
+            "denominator": "0x37a6add8a5000000000000000",
+            "numerator": "0x23e7dd97c28826052ad80ad"
+          },
+          "excess": {
+            "denominator": "0x37a6add8a5000000000000000",
+            "numerator": "0x76990df1c21bf7406fe8f7"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x800000000000000",
+            "numerator": "0x4189374bc6a7f"
+          },
+          "axis": {
+            "denominator": "0x4000000000000000",
+            "numerator": "0x108cacce29b351"
+          },
+          "baseline": {
+            "denominator": "0x800000000000000",
+            "numerator": "0xa69ebb60ad091"
+          },
+          "candidate": {
+            "denominator": "0x24097772a9000000000000000",
+            "numerator": "0x177e9bcb2a7d58f35c8704b"
+          },
+          "deviation": {
+            "denominator": "0x24097772a9000000000000000",
+            "numerator": "0x176a5b8e0689b48df0e1327"
+          },
+          "excess": {
+            "denominator": "0x24097772a9000000000000000",
+            "numerator": "0x4f6eb328d31a40ff5e5b79"
+          }
+        },
+        {
+          "allowed": {
+            "denominator": "0x800000000000000",
+            "numerator": "0x4189374bc6a7f"
+          },
+          "axis": {
+            "denominator": "0x2000000000000000",
+            "numerator": "0x8466721cabfef"
+          },
+          "baseline": {
+            "denominator": "0x37a6add8a3800000000000000",
+            "numerator": "0x48e23d2a1f655be0794eac9"
+          },
+          "candidate": {
+            "denominator": "0x1000000000000000",
+            "numerator": "0xa7eb64535ec35"
+          },
+          "deviation": {
+            "denominator": "0x6f4d5bb147000000000000000",
+            "numerator": "0x48c2abe1f6a43e2ad0daddf"
+          },
+          "excess": {
+            "denominator": "0x6f4d5bb147000000000000000",
+            "numerator": "0xfc61270ab60a8544fcfd6d"
+          }
+        }
+      ],
+      "diagnostics_truncated": true,
+      "domain": [
+        {
+          "denominator": "0x1",
+          "numerator": "0x0"
+        },
+        {
+          "denominator": "0x800000000000000",
+          "numerator": "0xc49ba5e353f7d"
+        }
+      ],
+      "evaluated_breakpoints": 1431,
+      "excluded_baseline": [
+        {
+          "denominator": "0x1",
+          "numerator": "0x0"
+        },
+        {
+          "denominator": "0x1",
+          "numerator": "0x0"
+        }
+      ],
+      "excluded_candidate": [
+        {
+          "denominator": "0x1",
+          "numerator": "0x0"
+        },
+        {
+          "denominator": "0x1",
+          "numerator": "0x0"
+        }
+      ],
+      "failing_breakpoints": 1142,
+      "full_domain_covered": true,
+      "identity": "4732508e339067a3eadf4c2e1ac9cdc0fc329cb6041cc2a406f94bb9ca87fdd0",
+      "maximum_deviation": {
+        "allowed": {
+          "denominator": "0x800000000000000",
+          "numerator": "0x4189374bc6a7f"
+        },
+        "axis": {
+          "denominator": "0x2000000000000000",
+          "numerator": "0x13a2a13dd71faf"
+        },
+        "baseline": {
+          "denominator": "0x20000000000000",
+          "numerator": "0x180bb90dbd56ab"
+        },
+        "candidate": {
+          "denominator": "0x1bf647612f30000000000000",
+          "numerator": "0xe051f8fb04035758147dad5"
+        },
+        "deviation": {
+          "denominator": "0x37ec8ec25e60000000000000",
+          "numerator": "0xdfba8ab156a586a171394a7"
+        },
+        "excess": {
+          "denominator": "0xdfb23b0979800000000000000",
+          "numerator": "0x377c1a5cf4a690c2504052533"
+        }
+      },
+      "maximum_excess": {
+        "allowed": {
+          "denominator": "0x800000000000000",
+          "numerator": "0x4189374bc6a7f"
+        },
+        "axis": {
+          "denominator": "0x2000000000000000",
+          "numerator": "0x13a2a13dd71faf"
+        },
+        "baseline": {
+          "denominator": "0x20000000000000",
+          "numerator": "0x180bb90dbd56ab"
+        },
+        "candidate": {
+          "denominator": "0x1bf647612f30000000000000",
+          "numerator": "0xe051f8fb04035758147dad5"
+        },
+        "deviation": {
+          "denominator": "0x37ec8ec25e60000000000000",
+          "numerator": "0xdfba8ab156a586a171394a7"
+        },
+        "excess": {
+          "denominator": "0xdfb23b0979800000000000000",
+          "numerator": "0x377c1a5cf4a690c2504052533"
+        }
+      },
+      "observations_sha256": "736b90bc3d7b8cfef3716452d9c171cfd94d61857686b571535130f437518a03",
+      "passed": false,
+      "policy": {
+        "absolute": "0x1.0624dd2f1a9fcp-9",
+        "domain": "full",
+        "grid": "linear",
+        "identity": "7fc8403d04f31fa7fa2c6be8408825e99140b1c1b21a14802cc34c45ec8af4c7",
+        "max_breakpoints": 400000,
+        "max_diagnostics": 16,
+        "relative": "0x0.0p+0",
+        "relative_floor": "0x0.0p+0",
+        "schema": "org.regressistor.waveform-policy",
+        "version": 1
+      },
+      "schema": "org.regressistor.waveform-comparison",
+      "scope": "continuous_piecewise_linear",
+      "status": "fail",
+      "value_unit": "V",
+      "version": 1
+    },
+    "nominal-fine/ac/imaginary": {
+      "axis_unit": "Hz",
+      "baseline_id": "ca949f1b8be10b2fc54ce7429d479404364e6fc3a701b1a9f74e4cac0d6cbe85",
+      "candidate_id": "831ae40010420377ac27caf8caa54d0c6a6330224c133718a78e9f1f86078849",
+      "diagnostics": [],
+      "diagnostics_truncated": false,
+      "domain": [
+        {
+          "denominator": "0x1",
+          "numerator": "0x0"
+        },
+        {
+          "denominator": "0x1",
+          "numerator": "0xfa0"
+        }
+      ],
+      "evaluated_breakpoints": 161,
+      "excluded_baseline": [
+        {
+          "denominator": "0x1",
+          "numerator": "0x0"
+        },
+        {
+          "denominator": "0x1",
+          "numerator": "0x0"
+        }
+      ],
+      "excluded_candidate": [
+        {
+          "denominator": "0x1",
+          "numerator": "0x0"
+        },
+        {
+          "denominator": "0x1",
+          "numerator": "0x0"
+        }
+      ],
+      "failing_breakpoints": 0,
+      "full_domain_covered": true,
+      "identity": "132813ab18cd30d4dd67ba72e490cf41402d0638ac7b355b76f64aeb06140945",
+      "maximum_deviation": {
+        "allowed": {
+          "denominator": "0x80000000000000",
+          "numerator": "0x3d70a3d70a3d7"
+        },
+        "axis": {
+          "denominator": "0x1",
+          "numerator": "0x4b"
+        },
+        "baseline": {
+          "denominator": "0x80000000000000",
+          "numerator": "-0x2f216e9b63096d"
+        },
+        "candidate": {
+          "denominator": "0x10000000000000",
+          "numerator": "-0x62b73aa9693b1"
+        },
+        "deviation": {
+          "denominator": "0x80000000000000",
+          "numerator": "0x23a2eb951941b"
+        },
+        "excess": {
+          "denominator": "0x20000000000000",
+          "numerator": "-0x6736e107c3ef"
+        }
+      },
+      "maximum_excess": {
+        "allowed": {
+          "denominator": "0x80000000000000",
+          "numerator": "0x3d70a3d70a3d7"
+        },
+        "axis": {
+          "denominator": "0x1",
+          "numerator": "0x4b"
+        },
+        "baseline": {
+          "denominator": "0x80000000000000",
+          "numerator": "-0x2f216e9b63096d"
+        },
+        "candidate": {
+          "denominator": "0x10000000000000",
+          "numerator": "-0x62b73aa9693b1"
+        },
+        "deviation": {
+          "denominator": "0x80000000000000",
+          "numerator": "0x23a2eb951941b"
+        },
+        "excess": {
+          "denominator": "0x20000000000000",
+          "numerator": "-0x6736e107c3ef"
+        }
+      },
+      "observations_sha256": "4c30c1ba5dbcbbe592bbb697cda92ad1a512b23a3abcb5e9dbbdfe5b4327b60d",
+      "passed": true,
+      "policy": {
+        "absolute": "0x1.eb851eb851eb8p-6",
+        "domain": "full",
+        "grid": "linear",
+        "identity": "ac126d1daf1f47e886991ac38b8fd6eaa9d77c74342da95d7b69de854930ded0",
+        "max_breakpoints": 400000,
+        "max_diagnostics": 16,
+        "relative": "0x0.0p+0",
+        "relative_floor": "0x0.0p+0",
+        "schema": "org.regressistor.waveform-policy",
+        "version": 1
+      },
+      "schema": "org.regressistor.waveform-comparison",
+      "scope": "continuous_piecewise_linear",
+      "status": "pass",
+      "value_unit": "V",
+      "version": 1
+    },
+    "nominal-fine/ac/real": {
+      "axis_unit": "Hz",
+      "baseline_id": "82669cd7f8eed72ce3a879dc5faafeecd8a37b4f6d88544ab2566375235d4429",
+      "candidate_id": "3ec1451c38cce6d1b8d54134b2f7c4fb8614b5e86e42153bdf02c583d53f9652",
+      "diagnostics": [],
+      "diagnostics_truncated": false,
+      "domain": [
+        {
+          "denominator": "0x1",
+          "numerator": "0x0"
+        },
+        {
+          "denominator": "0x1",
+          "numerator": "0xfa0"
+        }
+      ],
+      "evaluated_breakpoints": 161,
+      "excluded_baseline": [
+        {
+          "denominator": "0x1",
+          "numerator": "0x0"
+        },
+        {
+          "denominator": "0x1",
+          "numerator": "0x0"
+        }
+      ],
+      "excluded_candidate": [
+        {
+          "denominator": "0x1",
+          "numerator": "0x0"
+        },
+        {
+          "denominator": "0x1",
+          "numerator": "0x0"
+        }
+      ],
+      "failing_breakpoints": 0,
+      "full_domain_covered": true,
+      "identity": "ec531bf57d62afa74de8566056c08c6b0ed12f5088b61240f7cb7d69a2980a36",
+      "maximum_deviation": {
+        "allowed": {
+          "denominator": "0x80000000000000",
+          "numerator": "0x3d70a3d70a3d7"
+        },
+        "axis": {
+          "denominator": "0x1",
+          "numerator": "0x19"
+        },
+        "baseline": {
+          "denominator": "0x40000000000000",
+          "numerator": "0x3d201c7ecfe25d"
+        },
+        "candidate": {
+          "denominator": "0x8000000000000",
+          "numerator": "0x7ceaf375734ff"
+        },
+        "deviation": {
+          "denominator": "0x40000000000000",
+          "numerator": "0x1555d3be9c59b"
+        },
+        "excess": {
+          "denominator": "0x80000000000000",
+          "numerator": "-0x12c4fc59d18a1"
+        }
+      },
+      "maximum_excess": {
+        "allowed": {
+          "denominator": "0x80000000000000",
+          "numerator": "0x3d70a3d70a3d7"
+        },
+        "axis": {
+          "denominator": "0x1",
+          "numerator": "0x19"
+        },
+        "baseline": {
+          "denominator": "0x40000000000000",
+          "numerator": "0x3d201c7ecfe25d"
+        },
+        "candidate": {
+          "denominator": "0x8000000000000",
+          "numerator": "0x7ceaf375734ff"
+        },
+        "deviation": {
+          "denominator": "0x40000000000000",
+          "numerator": "0x1555d3be9c59b"
+        },
+        "excess": {
+          "denominator": "0x80000000000000",
+          "numerator": "-0x12c4fc59d18a1"
+        }
+      },
+      "observations_sha256": "eb51f9e753345bea91d9361d43c5f3424454b60c6fe094504d7a8603b27e8449",
+      "passed": true,
+      "policy": {
+        "absolute": "0x1.eb851eb851eb8p-6",
+        "domain": "full",
+        "grid": "linear",
+        "identity": "ac126d1daf1f47e886991ac38b8fd6eaa9d77c74342da95d7b69de854930ded0",
+        "max_breakpoints": 400000,
+        "max_diagnostics": 16,
+        "relative": "0x0.0p+0",
+        "relative_floor": "0x0.0p+0",
+        "schema": "org.regressistor.waveform-policy",
+        "version": 1
+      },
+      "schema": "org.regressistor.waveform-comparison",
+      "scope": "continuous_piecewise_linear",
+      "status": "pass",
+      "value_unit": "V",
+      "version": 1
+    },
+    "nominal-fine/transient/real": {
+      "axis_unit": "s",
+      "baseline_id": "eba6808cca9fb0d6e16711f1200fa0237c9fa864eee146f858f84bdaa61dc785",
+      "candidate_id": "843710f182c9d30c2bcc0282fac3a2ea5254a13f43ccbbab986615f208ed280d",
+      "diagnostics": [],
+      "diagnostics_truncated": false,
+      "domain": [
+        {
+          "denominator": "0x1",
+          "numerator": "0x0"
+        },
+        {
+          "denominator": "0x800000000000000",
+          "numerator": "0xc49ba5e353f7d"
+        }
+      ],
+      "evaluated_breakpoints": 1434,
+      "excluded_baseline": [
+        {
+          "denominator": "0x1",
+          "numerator": "0x0"
+        },
+        {
+          "denominator": "0x1",
+          "numerator": "0x0"
+        }
+      ],
+      "excluded_candidate": [
+        {
+          "denominator": "0x1",
+          "numerator": "0x0"
+        },
+        {
+          "denominator": "0x1",
+          "numerator": "0x0"
+        }
+      ],
+      "failing_breakpoints": 0,
+      "full_domain_covered": true,
+      "identity": "0aae02336d221d004b9e59b5e961de95fe7f4fa84252097994d88c01ff23af30",
+      "maximum_deviation": {
+        "allowed": {
+          "denominator": "0x800000000000000",
+          "numerator": "0x4189374bc6a7f"
+        },
+        "axis": {
+          "denominator": "0x4000000000000000",
+          "numerator": "0x1af7349a55791d"
+        },
+        "baseline": {
+          "denominator": "0x1257c12d698e20000000000000",
+          "numerator": "0x8ad87ab2f7579d7b1d380816b"
+        },
+        "candidate": {
+          "denominator": "0x40000000000000",
+          "numerator": "0x1e482d53068d47"
+        },
+        "deviation": {
+          "denominator": "0x24af825ad31c40000000000000",
+          "numerator": "0x9531d93e23e8aa7c816d81"
+        },
+        "excess": {
+          "denominator": "0x495f04b5a638800000000000000",
+          "numerator": "-0x24668417101ed6d2fe0b005ef"
+        }
+      },
+      "maximum_excess": {
+        "allowed": {
+          "denominator": "0x800000000000000",
+          "numerator": "0x4189374bc6a7f"
+        },
+        "axis": {
+          "denominator": "0x4000000000000000",
+          "numerator": "0x1af7349a55791d"
+        },
+        "baseline": {
+          "denominator": "0x1257c12d698e20000000000000",
+          "numerator": "0x8ad87ab2f7579d7b1d380816b"
+        },
+        "candidate": {
+          "denominator": "0x40000000000000",
+          "numerator": "0x1e482d53068d47"
+        },
+        "deviation": {
+          "denominator": "0x24af825ad31c40000000000000",
+          "numerator": "0x9531d93e23e8aa7c816d81"
+        },
+        "excess": {
+          "denominator": "0x495f04b5a638800000000000000",
+          "numerator": "-0x24668417101ed6d2fe0b005ef"
+        }
+      },
+      "observations_sha256": "93a9e3e75edf971d46b1250a08bc67e118d0086826a18700e6e9f5a2fdaf0baa",
+      "passed": true,
+      "policy": {
+        "absolute": "0x1.0624dd2f1a9fcp-9",
+        "domain": "full",
+        "grid": "linear",
+        "identity": "7fc8403d04f31fa7fa2c6be8408825e99140b1c1b21a14802cc34c45ec8af4c7",
+        "max_breakpoints": 400000,
+        "max_diagnostics": 16,
+        "relative": "0x0.0p+0",
+        "relative_floor": "0x0.0p+0",
+        "schema": "org.regressistor.waveform-policy",
+        "version": 1
+      },
+      "schema": "org.regressistor.waveform-comparison",
+      "scope": "continuous_piecewise_linear",
+      "status": "pass",
+      "value_unit": "V",
+      "version": 1
+    }
+  },
+  "harness_sha256": "5777a7897e1483c772b7185e076e1df56b9d1440ba18ff49c7e46eac9f614e30",
+  "limits": {
+    "aggregate_process_bytes": 25165824,
+    "file_bytes": 8388608,
+    "wall_seconds_per_process": 30.0
+  },
+  "ngspice_sha256": "f86062f3bb1016dcf1552a57f38954891b4e71aee6defbebde6de589ee55682f",
+  "ngspice_version": "******\r\n** ngspice-42 : Circuit level simulation program\r\n** Compiled with KLU Direct Linear Solver\r\n** The U. C. Berkeley CAD Group\r\n** Copyright 1985-1994, Regents of the University of California.\r\n** Copyright 2001-2023, The ngspice team.\r\n** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html\r\n** Please file your bug-reports at https://ngspice.sourceforge.io/bugrep.html\r\n** Creation Date: Dec 27 2023   21:02:30\r\n******",
+  "platform": "Windows-10-10.0.26200-SP0",
+  "python": "3.11.2",
+  "regressistor_source": {
+    "files": {
+      "__init__.py": "4283948961c36a0942fa549f0d5d589b16f16d53ab41c754161fa330917ecb21",
+      "__main__.py": "f7356f2ef51a6848ab9cfc4af52e41340792eb9373aedc4e7de865470109c6c1",
+      "_output.py": "6ebb7a222786e55706f39cff988dcd993dcd9e3b8c9da61720bc58ce5eef3522",
+      "_strict_data.py": "ce9c6b789e65161dc18862de37761effbfd530d1693af96640d107d8aef8e549",
+      "_version.py": "1523456321e112b3ac18132df03aeb53932e21f913761c7243f53c8ba69c986e",
+      "bundle.py": "10cdc2873065f2137482de5dd3429eef261e3dd475f1b086f6ccede2c456de2d",
+      "cli.py": "739b77abd3e8faf3f40b89812cf5d064efc48635d8aa7811940e281f81ea1f91",
+      "dco.py": "33e83dd5fa2f716a64c4bea6d22c5c3e5669126aeac45a0df972cda4bb4f4fd4",
+      "dispersion.py": "cf0f283a7ef99b04b2f361cfa90e5895e5ce5edda2992e2b816808a9789a97fe",
+      "distribution_audit.py": "b04ce3673ec11803f095e1bcd73006cb11051fb227166b56f366089b145cd617",
+      "errors.py": "63dc58d5d3040e881fcd8697746e1085a7607be9f126032bc2cc14c9dc846a28",
+      "gate.py": "0ee683a9e8fc17bcd466cea324187b523a78f92e7b35fc5c7cf83471c06d3afa",
+      "inspection.py": "c2fba5931a65acf03313f66c67a9c00976c22ee3a583e0dd3cabcbdce7eb0e3a",
+      "liberty.py": "fa7aa470ba7758a745431b2d87bd2b0d9475a6c7fda5a3a1e852724fcde5c5fb",
+      "matching.py": "5ac18650aa311756f3efeeed41ae96c6b824bd9839e6eae16c92e1be4156251a",
+      "model.py": "46f12d408571ddbeef9f4c357a2f44962d1c3f3b08f3726823d81f8c7b227ed1",
+      "policy.py": "e4547fa092274a11eff6b03247030cc3af7c14361a0ee06aad12f3d51536edaf",
+      "reducers.py": "12a47e4cfed3cc2b28f069460833e3e538a3d5ccbe7a0811f3993013d61bbbf7",
+      "release_artifacts.py": "9f147c4326ad077e3f5763e40b49ef19d5f50801f739988bfceb04a866bc18c4",
+      "render.py": "29c8698a8a818a4f457283bd80280c7358be9d76861e23e4399e601efaf63a90",
+      "report.py": "a9c47508319a90d7eb5f66582bbc2972bf27fdaf841d1c35530974fa3fa5ef2a",
+      "schemas/waveform-comparison-v1.schema.json": "72a9a3196c0ba7fab4168ebd527584a7a597f8a2fb9458ae1f66b15627a91095",
+      "schemas/waveform-policy-v1.schema.json": "5a69b3aa1e0eac3a8f9b5ccaae0de29227648fcc2754a72470f6ab5f525a5524",
+      "schemas/waveform-v1.schema.json": "3e923a5658674064e9c2467176a5b51cd6f57d0e28789da6e9710e222cf6ae19",
+      "units.py": "ad61770fff3bc941d1ffa6c93deb90e7cf409fbeafbff8cdd9198583ac7b15ad",
+      "waveform.py": "1b6befa2460854d90f715407e308527ba31ae0697c1da7b3dd80961001781563",
+      "waveform_json.py": "b613340f7d79978098291b9045956829c6eb57e4f14c7dde8c2916fc3ab6389f"
+    },
+    "sha256": "9bc1ac4183f2e3a069c9c348c03bd6190998abe51d0b3b02c379aa85467fec5c"
+  },
+  "regressistor_version": "0.5.0",
+  "schema": "org.regressistor.waveform-simulator-oracle",
+  "scope": "three fixed original RC experiments; successful process/log plus sampled analytic checks, not general convergence certification",
+  "spicetrellis": {
+    "payload_files": {
+      "__init__.py": "138c993bfe248402475e248a4ff694e43b30142144e9e97741e9efb3fc80e2d4",
+      "__main__.py": "40bd16cb89dff06c0c65390543c231b6476f3fa4d1ee06656798dcd0a263ed95",
+      "_output.py": "3e5c93d1f4df9cb770a972231cd674de6086ea5899db3ac8c66b01888cfec53a",
+      "_result_numbers.py": "551bf45112392b76f3cf082f3e3937c5578d3c92c0b7e4524224f3a3cc0b95c8",
+      "_version.py": "84389f85318d49c497b3baf06a26696452424a93d1863be2a770564687731c97",
+      "api.py": "945f7f1abb83b8eba58ba0760b4a7b5b65787c5aa0f5c655f56fd1c3849b297a",
+      "cli.py": "fc59d11b5643ab55a20bcb99d012982bbf0dece0c2b6589a011c3ea746de04f3",
+      "dco.py": "6b775de39ffe9fc130c91d664176b5d4b8a923079aa47a28e1b1ca64b9bb6579",
+      "distribution_audit.py": "0dd8c50c36d5f71c84f34f95b4ff22f97db389bacd1b60f8661da6920aea039f",
+      "elaborate.py": "8a51556d4815dd69d7244b932d3e303008cd0e6d5d46e908b8b03e28bba4556f",
+      "emit.py": "1016294d70c2089c992fecfd4a5135c40cb1213deb92d8fd079f6d6b0ea274f1",
+      "expressions.py": "5947484e96a05db25f529b2ea38857f9075fb53555bea0437ff79208e23d3d49",
+      "fuzzing.py": "e02cdb1167fbe1acd1d715b530b1da3a73182cc79f08345f42ab512ff67f386c",
+      "geometry.py": "5882fbc6f63097e24a118aea9e194604ebe1e1835aeaea7e3c47de78c645907c",
+      "interop.py": "0ad9ac675489fd2b78e27b19df96ef34b9c037e08445561f59e3b8fb2f9d0594",
+      "ir.py": "9b9c47bf2e82484b3c9a608cd6afa679c22a2ffb36069d1e3179ffab2086d368",
+      "model.py": "0e82686c97dad9b1542fb7ec06f5e82c83abe83b735ebe93347148e5a9676017",
+      "parser.py": "575eef7aea19e471e0abd44f4503c3d3f4916280f47824aee1ab43cf12a751bb",
+      "physical.py": "8d5f6454c5f1ae098fc8d0d4486a29f2b97ae6dfb6184273eb0a953bfe26ca9e",
+      "physical_json.py": "955428495a87ed0f8770fc7201f948d46a50b9280eafc9c0535f9b67a2e1d8d6",
+      "provenance.py": "b07965ed01fd6d5db258ad71175a50ab1242f301a8cc520df4a8d412f6f60b0e",
+      "py.typed": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_results.py": "a68399c3790cfb17ee5beb41adea8aefb922a74f03227ab991098cbf7fa58fca",
+      "release_artifacts.py": "9f147c4326ad077e3f5763e40b49ef19d5f50801f739988bfceb04a866bc18c4",
+      "result_json.py": "9a8fecae73d5f198a2a9f7f8eb54ca13e779b6cbef1156f84ee39e48a160d9cc",
+      "schemas/circuit-ir-v1.schema.json": "70527b0d19349cd179134d36225e8a41b8d6c64da96fea8f8a96c72232d9ce3a",
+      "schemas/physical-library-v1.schema.json": "eb3602ca752a8d68cd7747c887c76c82a2a2861a1865bb318808632f8bdcbcbd",
+      "schemas/simulation-result-v1.schema.json": "a99d89aa9470df7bc2d96bfcb64d0b6e9789a3677fd0cbaec66c46aecb3e9f34",
+      "semantics.py": "693695b19c274b925f9fef5775b7a7ae599734b1bc20b560cc4763a6990f2db8",
+      "simulation_results.py": "09ec6f9d35f3e5c9603b819ba6f0e2591875f8fa6cdcd481d646e987066f5cba",
+      "source.py": "726cbb575e994b9344920a38d3ae420ba9f950df8688f56c02bf4a0045e1e04a",
+      "xyce_results.py": "bbd93631525c1dc4c847f3569e99cf41e092734b899c80dea48ec80c937d5545"
+    },
+    "version": "0.6.0",
+    "wheel_sha256": "59f2c73554a0318b817ff02f8fdd7d82c34911ef7d9752f111a64d9244cc1860"
+  },
+  "version": 1,
+  "version_process": {
+    "arguments": [
+      "--version"
+    ],
+    "files": {
+      "stderr.txt": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout.txt": {
+        "bytes": 453,
+        "sha256": "13b170a1399140f4899c16941612d00bcb3761b67d0e651ed26aeef321504748"
+      }
+    },
+    "returncode": 0,
+    "wall_seconds": 0.06300000000010186
+  }
+}

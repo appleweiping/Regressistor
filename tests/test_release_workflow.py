@@ -1,6 +1,32 @@
+import ast
+import re
+import textwrap
 from pathlib import Path
 
 WORKFLOW = Path(".github/workflows/release.yml")
+
+
+def test_project_importing_release_heredocs_use_the_installed_environment() -> None:
+    source = WORKFLOW.read_text(encoding="utf-8")
+    blocks = re.findall(r"(?m)^          (.+) <<'PY'\n([\s\S]+?)^          PY$", source)
+    project_blocks = []
+    for command, code in blocks:
+        tree = ast.parse(textwrap.dedent(code))
+        imports = [
+            alias.name
+            for node in ast.walk(tree)
+            if isinstance(node, ast.Import)
+            for alias in node.names
+        ]
+        imports.extend(
+            node.module or "" for node in ast.walk(tree) if isinstance(node, ast.ImportFrom)
+        )
+        if any(name == "regressistor" or name.startswith("regressistor.") for name in imports):
+            project_blocks.append(command)
+            assert command.startswith(
+                ("uv run --frozen python -I -", ".release-smoke/bin/python -I -")
+            ), f"project import uses an interpreter without the installed package: {command}"
+    assert len(project_blocks) == 2
 
 
 def test_release_workflow_binds_and_revalidates_exact_installed_wheel_evidence() -> None:

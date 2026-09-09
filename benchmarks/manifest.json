@@ -4,7 +4,7 @@
   "license": "MIT",
   "contract": "regressistor.measurement-bundle/2",
   "runtime": {
-    "distribution_version": "0.4.0",
+    "distribution_version": "0.4.1",
     "package_tree_sha256": "faf79b340234f01209e67a1d0bbb7868f880d3184ce4835870ed578bb0ee7cb2",
     "harness_sha256": "d6532bdcbef7260b094ba1c58ed180c250b98769642901940b737e5475294c3d"
   },

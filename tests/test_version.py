@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from importlib.metadata import version
+from pathlib import Path
 
 import pytest
 
@@ -16,3 +17,14 @@ def test_runtime_distribution_and_cli_versions_agree(
         main(["--version"])
     assert raised.value.code == 0
     assert capsys.readouterr().out == f"regressistor {__version__}\n"
+
+
+def test_citation_version_and_date_match_the_current_changelog() -> None:
+    fields = dict(
+        line.split(": ", 1)
+        for line in Path("CITATION.cff").read_text(encoding="utf-8").splitlines()
+        if line.startswith(("version: ", "date-released: "))
+    )
+    assert fields["version"] == __version__
+    heading = f"## {__version__} - {fields['date-released']}"
+    assert heading in Path("CHANGELOG.md").read_text(encoding="utf-8").splitlines()
